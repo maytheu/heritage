@@ -1,5 +1,5 @@
 .headerHome {
-  height: 56px;
+  height: 10%;
   width: 100%;
   position: fixed;
   top: 0;
@@ -11,4 +11,75 @@
   align-items: center;
   padding: 0 20px;
   box-sizing: border-box;
+}
+.drawerToggle {
+  width: 40px;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.drawerToggle div {
+  width: 90%;
+  height: 3px;
+  background-color: white;
+}
+.sideDrawer{
+  position: fixed;
+  width: 280px;
+  max-width: 70%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 200;
+  background-color: white;
+  padding: 32px 16px;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-out
+}
+.open{
+  transform: translateX(0) 
+}
+
+.close{
+  transform: translateX(-100%)
+}
+
+.closeToggle{
+  right: 0;
+  position: absolute;
+  margin-right: 16px;
+  cursor: pointer;
+}
+.navigationItems{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  height: 100%;
+}
+.link{
+  margin: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+.link a {
+  width: 100%;
+  text-decoration: none;
+  display: block;
+  box-sizing: border-box; 
+}
+.link a:hover,
+.link a:active,
+.link a.active{
+    color: #40a4c8
 }
