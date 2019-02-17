@@ -1,8 +1,8 @@
 import React from "react";
 
-import HeaderPages from "../header_footer/HeaderPages";
+import HeaderPages from '../header_footer/HeaderPages'
 
-const Pages = props => {
+const Pages = (props) => {
   return (
     <div>
       <HeaderPages />
@@ -11,4 +11,5 @@ const Pages = props => {
   );
 };
 
-export default Pages;
+
+export default (Pages);

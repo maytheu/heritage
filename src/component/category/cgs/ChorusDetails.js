@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-
+import { firebaseChorus } from "../../../firebase";
 import { Spinner } from "../../utils/misc";
-import { firebaseCgs } from "../../../firebase";
 
-class SongDetails extends Component {
+class ChorusDetails extends Component {
   state = {
     songId: "",
     title: "",
@@ -21,17 +20,21 @@ class SongDetails extends Component {
       });
     };
     const songID = this.props.match.params.id;
-    if (songID === '404') {
+    if ( songID === '404') {
       this.props.history.push("/cgs");
     } else {
-      firebaseCgs
+      //correct id
+      let number = "";
+      let song = "";
+      let title = null;
+      firebaseChorus
         .child("en")
         .child(songID)
         .once("value", function(snapshot) {
           let response = snapshot.val();
-          let number = response.number;
-          let song = response.song;
-          let title = response.title;
+          number = response.number;
+          song = response.song;
+          title = response.title;
           getData(number, title, song);
         });
     }
@@ -53,4 +56,4 @@ class SongDetails extends Component {
   }
 }
 
-export default SongDetails;
+export default ChorusDetails;

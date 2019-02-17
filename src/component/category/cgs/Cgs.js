@@ -1,7 +1,11 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
-import './Cgs.css'
+import "./Cgs.css";
 import InputField from "../../utils/InputField";
+import { checkValidityInput } from "../../utils/checkValidity";
+import { firebaseChorus, firebaseCgs } from "../../../firebase";
+import { firebaseLooper, Spinner } from "../../utils/misc";
 
 class Cgs extends Component {
   state = {
@@ -14,7 +18,11 @@ class Cgs extends Component {
         },
         value: "",
         validation: {
-          required: true
+          required: true,
+          minLength: 1,
+          maxLength: 3,
+          minRange: 1,
+          MaxRange: 700
         },
         valid: false,
         touch: false
@@ -36,7 +44,7 @@ class Cgs extends Component {
         elementType: "input",
         elementConfig: {
           type: "text",
-          placeholder: "Search for song"
+          placeholder: "Search song"
         },
         value: "",
         validation: {
@@ -46,86 +54,220 @@ class Cgs extends Component {
         touch: false
       }
     },
+    chorusSong: [],
+    cgsSong: [],
+    error: "",
     isValidForm: false,
-    chorusSong: {
-      en: {
-        1:{
-          number: 1,
-        title: "Praise Him",
-        song: "Verse 1 Hail the power of Jesus name",
-        },
-        2:{
-          number: 2,
-        title: "Hallelujah",
-        song: "Verse 1 Hallelujah, Amen"
-        },
-        3:{
-          number: 2,
-        title: "Amen Glory to God in the highest",
-        song: "Verse 1 Hallelujah, Amen"
+    isLoading: true,
+    searchFilter: [],
+    isCgs: false,
+    result: ""
+  };
+
+  componentDidMount() {
+    firebaseChorus
+      .child("en")
+      .once("value")
+      .then(snapshot => {
+        const chorusSong = firebaseLooper(snapshot);
+        this.setState({
+          chorusSong,
+          isLoading: false
+        });
+      });
+
+    firebaseCgs
+      .child("en")
+      .once("value")
+      .then(snapshot => {
+        const cgsSong = firebaseLooper(snapshot);
+        this.setState({
+          cgsSong,
+          isLoading: false
+        });
+      });
+  }
+
+  valueChangedHandler = element => {
+    const updatedOrderForm = {
+      ...this.state.formData
+    };
+    const updatedFormElement = {
+      ...updatedOrderForm[element.id]
+    };
+    updatedFormElement.value = element.event.target.value;
+    updatedFormElement.valid = checkValidityInput(
+      updatedFormElement.value,
+      updatedFormElement.validation
+    );
+    updatedFormElement.touch = true;
+    updatedOrderForm[element.id] = updatedFormElement;
+
+    let formValid = true;
+    formValid = updatedOrderForm[element.id].valid && formValid;
+
+    this.setState({ formData: updatedOrderForm, isValidForm: formValid });
+  };
+
+  submitForm = (event, type) => {
+    event.preventDefault();
+    const value = this.state.formData.cgs.value;
+    const searchvalue = this.state.formData.chorus.value;
+    const cgsSearch = this.state.formData.search.value;
+    if (this.state.isValidForm && type === "cgs") {
+      firebaseCgs
+        .child("en")
+        .orderByChild("number")
+        .equalTo(value)
+        .once("value")
+        .then(snapshot => {
+          snapshot.forEach(userSnapshot => {
+            let key = userSnapshot.key;
+            this.props.history.push(`song/${key}`);
+          });
+        })
+        .catch(e => {
+          this.setState({ formError: true, isLoading: false });
+        });
+    }
+    if (this.state.isValidForm && type === "searchChorus") {
+      if (this.state.chorusSong) {
+        let searchFilter = this.state.chorusSong.filter(search => {
+          return search.song.indexOf(searchvalue) !== -1;
+        });
+        if (searchFilter.length === 0) {
+          this.setState({
+            searchFilter: [
+              {
+                id: "404",
+                number: "The song numbber does not exist",
+                title: "Try again with different Keyword"
+              }
+            ]
+          });
+        } else {
+          this.setState({ searchFilter, result: "Search result From Chorus" });
         }
-      },
-      yr: {},
-      es: {},
-      fr: {}
+      } else {
+        this.setState({ error: "Unable to connect" });
+      }
+    }
+    if (this.state.isValidForm && type === "searchCgs") {
+      if (this.state.cgsSong) {
+        let searchFilter = this.state.cgsSong.filter(search => {
+          return search.song.indexOf(cgsSearch) !== -1;
+        });
+        if (searchFilter.length === 0) {
+          this.setState({
+            searchFilter: [
+              {
+                id: "404",
+                number: "The song numbber does not exist",
+                title: "Try again with different Keyword"
+              }
+            ]
+          });
+        } else {
+          this.setState({
+            searchFilter,
+            isCgs: true,
+            result: "Search result From Cgs"
+          });
+        }
+      } else {
+        this.setState({ error: "Cannnot find Keyword" });
+      }
     }
   };
 
-  songDetailHandler = () => {
-    this.props.history.push('/song')
-  }
+  showChorus = chorus =>
+    chorus ? (
+      chorus.map(songChorus => (
+        <Link
+          to={
+            this.state.isCgs
+              ? `song/${songChorus.id}`
+              : `chorus/${songChorus.id}`
+          }
+          key={songChorus.id}
+        >
+          <div className="chorus">
+            <div>Song No: {songChorus.number}</div>
+            <div> Title: {songChorus.title}</div>
+          </div>
+        </Link>
+      ))
+    ) : (
+      <div className="chorus">
+        Song cannnot be displayed at the moment, Please try again later
+      </div>
+    );
 
   render() {
     const cgs = this.state.formData.cgs;
     const chorus = this.state.formData.chorus;
     const search = this.state.formData.search;
 
-    const songChorusArray = [];
-    for (let song in this.state.chorusSong.en) {
-      songChorusArray.push({
-        id: song,
-        songNumber: this.state.chorusSong.en[song]
-      });
-    }
-
     return (
       <div className="container">
-        <form className="form">
+        <form
+          className="form"
+          onSubmit={event => this.submitForm(event, "cgs")}
+        >
           <InputField
+            id={"cgs"}
             elementType={cgs.elementType}
             elementConfig={cgs.elementConfig}
             value={cgs.value}
             invalid={!cgs.valid}
             touched={cgs.touch}
+            changed={element => this.valueChangedHandler(element)}
           />
-          <button style={{ flexGrow: "1" }}>Open</button>
+          <button style={{ flexGrow: "1" }} disabled={!cgs.valid}>
+            Open
+          </button>
         </form>
-        <form className="form">
+        <form
+          className="form"
+          onSubmit={event => this.submitForm(event, "searchChorus")}
+        >
           <InputField
+            id={"chorus"}
             elementType={chorus.elementType}
             elementConfig={chorus.elementConfig}
             value={chorus.value}
             invalid={!chorus.valid}
             touched={chorus.touch}
+            changed={element => this.valueChangedHandler(element)}
           />
-          <button style={{ flexGrow: "1" }}>Open</button>
+          <button style={{ flexGrow: "1" }} disabled={!chorus.valid}>
+            Open
+          </button>
         </form>
-        <form className="form">
+        <form
+          className="form"
+          onSubmit={event => this.submitForm(event, "searchCgs")}
+        >
           <InputField
+            id={"search"}
             elementType={search.elementType}
             elementConfig={search.elementConfig}
             value={search.value}
             invalid={!search.valid}
             touched={search.touch}
+            changed={element => this.valueChangedHandler(element)}
           />
-          <button style={{ flexGrow: "1" }}>Open</button>
+          <button style={{ flexGrow: "1" }} disabled={!search.valid}>
+            Open
+          </button>
         </form>
-        {songChorusArray.map(songChorus => (
-          <div key={songChorus.id} className='chorus' onClick={this.songDetailHandler}>
-          <div>Song No: {songChorus.id}</div>
-          <div>Chorus Title: {songChorus.songNumber.title}</div>
-          </div>
-        ))}
+        <div>{this.state.result !== "" ? this.state.result : null}</div>
+        {this.showChorus(
+          this.state.searchFilter
+            ? this.state.searchFilter
+            : this.state.chorusSong
+        )}
+        {this.state.isLoading ? <Spinner /> : ""}
       </div>
     );
   }

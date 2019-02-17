@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-
+import AdminDrawer from "./AdminDrawer";
 import ToggleMenu from "./ToggleMenu";
-import SideDrawer from "./SideDrawer";
 import Settings from "./Settings";
 import Modal from "../utils/Modal";
 
-class HeaderPages extends Component {
+class HeaderAdmin extends Component {
   state = {
     showSideDrawer: false,
     showSettings: false
@@ -26,20 +25,18 @@ class HeaderPages extends Component {
   };
 
   render() {
+    console.log(this.state)
     return (
       <header className="headerHome">
         <ToggleMenu showToggle={this.SideDrawerToggleHandler} />
-       
-          <SideDrawer
-            closed={this.closeSideDrawerHandler}
-            show={this.state.showSideDrawer}
-          />
-       
+        <AdminDrawer
+          closed={this.closeSideDrawerHandler}
+          show={this.state.showSideDrawer}
+        />
+
         <div>
           <i className="material-icons">home</i>
-          <i className="material-icons" onClick={this.showSettingsHandler}>
-            settings
-          </i>
+          <i className="material-icons" onClick={this.showSettingsHandler}>settings</i>
         </div>
         <Modal display={this.state.showSettings} close={this.closeChorus}>
           <Settings />
@@ -49,5 +46,4 @@ class HeaderPages extends Component {
   }
 }
 
-
-export default HeaderPages;
+export default HeaderAdmin;
