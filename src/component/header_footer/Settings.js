@@ -1,29 +1,38 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { langSettings } from '../../actions/settings';
+import React, { Component } from "react";
+import {connect} from 'react-redux'
+
+import { language } from "../../actions/settings";
 
 class Settings extends Component {
+  state = {
+    langs: { en: "en", fr: "fr", yr: "yr", ef: "ef" },
+    check: ""
+  };
+  isChecked = key => {
+    this.setState({ check: key });
+this.props.dispatch(language(key));
+  };
 
-    componentDidMount(){
-        this.props.dispatch(langSettings())
-        
+  
 
-    }
-
-    render() {
-        console.log(this.props.lang)
-
+  render() {
+    let languageObject = Object.keys(this.state.langs).map(langKey => {
+      return [...Array(this.state.langs[langKey])].map((_, index) => {
         return (
-            <div>{this.props.lang.lang.map((item, i) => (
-                <div key={i}>tyyyuvct</div>
-            ))}
-            </div>
+          <label key={langKey}>
+            <input
+              type="radio"
+              checked={langKey === this.state.check}
+              onChange={this.isChecked.bind(this, langKey)}
+            />
+            {langKey}
+          </label>
         );
-    }
+      });
+    });
+
+    return <div>{languageObject}</div>;
+  }
 }
 
-function mapStateToProps(state) {
-    return { lang: state.isAuth };
-  }
-
-export default connect(mapStateToProps)(Settings);
+export default connect()(Settings);

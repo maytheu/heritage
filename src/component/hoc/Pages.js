@@ -1,15 +1,18 @@
-import React from "react";
+import React, { Component } from 'react';
 
-import HeaderPages from '../header_footer/HeaderPages'
+import HeaderPages from "../header_footer/HeaderPages";
 
-const Pages = (props) => {
-  return (
-    <div>
-      <HeaderPages />
-      {props.children}
-    </div>
-  );
-};
+class Pages extends Component {
+  render() {
+    return (
+        <div>
+      <HeaderPages user={this.props.user} />
+      {this.props.children} 
+      </div>
+    );
+  }
+}
 
 
-export default (Pages);
+export default Pages;
+

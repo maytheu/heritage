@@ -11,6 +11,7 @@ var config = {
   storageBucket: "heritage-45acb.appspot.com",
   messagingSenderId: "911242211563"
 };
+
 firebase.initializeApp(config);
 
 const firebaseDB = firebase.database();

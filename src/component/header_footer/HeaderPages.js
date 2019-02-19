@@ -29,12 +29,11 @@ class HeaderPages extends Component {
     return (
       <header className="headerHome">
         <ToggleMenu showToggle={this.SideDrawerToggleHandler} />
-       
-          <SideDrawer
-            closed={this.closeSideDrawerHandler}
-            show={this.state.showSideDrawer}
-          />
-       
+        <SideDrawer
+          user={this.props.user}
+          closed={this.closeSideDrawerHandler}
+          show={this.state.showSideDrawer}
+        />
         <div>
           <i className="material-icons">home</i>
           <i className="material-icons" onClick={this.showSettingsHandler}>
@@ -48,6 +47,5 @@ class HeaderPages extends Component {
     );
   }
 }
-
 
 export default HeaderPages;

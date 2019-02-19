@@ -73,13 +73,14 @@ class SignIn extends Component {
     }
     if (validForm) {
       firebase
-        .auth()
-        .signInWithEmailAndPassword(submitData.email, submitData.password)
+      .auth()
+      .signInWithEmailAndPassword(submitData.email, submitData.password)
         .then(() => {
             this.props.history.push('/admin/dashboard')
         })
         .catch(err => {
           this.setState({ formError: true });
+          console.log(this.state.formError)
         });
     } else {
       this.setState({ formError: true });

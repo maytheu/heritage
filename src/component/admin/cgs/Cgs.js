@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from 'react-redux'
 
 import { firebaseCgs } from "../../../firebase";
 import { Spinner, firebaseLooper } from "../../utils/misc";
@@ -15,7 +16,7 @@ class Cgs extends Component {
 
   componentDidMount() {
     firebaseCgs
-      .child("en")
+      .child(this.props.lang.lang || 'en')
       .orderByKey()
       .once("value")
       .then(snapshot => {
@@ -36,6 +37,7 @@ class Cgs extends Component {
   };
 
   render() {
+    console.log(this.props.lang.lang)
     return (
       <div className="container">
         <div>
@@ -74,4 +76,8 @@ class Cgs extends Component {
   }
 }
 
-export default Cgs;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+
+export default connect(mapStateToProps)(Cgs);

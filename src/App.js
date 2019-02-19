@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import "./App.css";
 import Home from "./component/home/Home";
@@ -36,8 +36,8 @@ import Adult from "./component/category/sunday/Adult";
 import Junior from "./component/category/sunday/Junior";
 import Elem from "./component/category/sunday/Elem";
 import SignIn from "./component/admin/SignIn";
-import AdminPages from "./component/hoc/AdminPages";
-import PrivateRoute from "./component/hoc/PrivateRoute";
+import PrivateRoute from "./component/utils/authRoute/PrivateRoute";
+import PublicRoute from "./component/utils/authRoute/publicRoute";
 
 class App extends Component {
   render() {
@@ -45,8 +45,7 @@ class App extends Component {
       <div className="App">
         <Switch>
           <Route path="/" exact component={Home} />
-
-          <AdminPages>
+          <Pages user={this.props.user}>
             <PrivateRoute
               path="/admin/dashboard"
               exact
@@ -54,100 +53,174 @@ class App extends Component {
               {...this.props}
             />
 
-            <Route path="/admin/cgs" exact component={AdminCgs} />
-            <Route
+            <PrivateRoute
+              path="/admin/cgs"
+              exact
+              component={AdminCgs}
+              {...this.props}
+            />
+            <PrivateRoute
               path="/admin/cgs_edit/:id"
               exact
               component={AdminAddEditCgs}
+              {...this.props}
             />
-            <Route
+            <PrivateRoute
               path="/admin/chorus_edit/:id"
               exact
               component={AdminEditChorus}
+              {...this.props}
             />
-            <Route
+            <PrivateRoute
               path="/admin/lessons/edit_junior"
               exact
               component={AdminAddEditJunior}
+              {...this.props}
             />
-            <Route
+            <PrivateRoute
               path="/admin/lessons/edit_junior/:id"
               exact
               component={AdminAddEditJunior}
+              {...this.props}
             />
-            <Route
+            <PrivateRoute
               path="/admin/lessons/edit_elem/:id"
               exact
               component={AdminAddEditElem}
+              {...this.props}
             />
-            <Route
+            <PrivateRoute
               path="/admin/lessons/edit_elem"
               exact
               component={AdminAddEditElem}
+              {...this.props}
             />
-            <Route path="/admin/cgs_edit" exact component={AdminAddEditCgs} />
-            <Route path="/admin/lessons" exact component={AdminSunday} />
-            <Route
+            <PrivateRoute
+              path="/admin/cgs_edit"
+              {...this.props}
+              exact
+              component={AdminAddEditCgs}
+            />
+            <PrivateRoute
+              path="/admin/lessons"
+              {...this.props}
+              exact
+              component={AdminSunday}
+            />
+            <PrivateRoute
               path="/admin/lesson_edit/:id"
               exact
+              {...this.props}
               component={AdminAddEditSunday}
             />
-            <Route
+            <PrivateRoute
               path="/admin/lessons_edit"
               exact
+              {...this.props}
               component={AdminAddEditSunday}
             />
-            <Route path="/admin/location" exact component={AdminLocation} />
-            <Route
+            <PrivateRoute
+              path="/admin/location"
+              {...this.props}
+              exact
+              component={AdminLocation}
+            />
+            <PrivateRoute
               path="/admin/location_edit/:address"
               exact
+              {...this.props}
               component={AdminAddEditLocation}
             />
-            <Route
+            <PrivateRoute
               path="/admin/location_edit"
               exact
+              {...this.props}
               component={AdminAddEditLocation}
             />
-            <Route path="/admin/study" exact component={AdminStudy} />
-            <Route
+            <PrivateRoute path="/admin/study" exact component={AdminStudy} {...this.props} />
+            <PrivateRoute
+              {...this.props}
               path="/admin/study_edit/:id"
               exact
               component={AdminAddEditStudy}
             />
-            <Route
+            <PrivateRoute
               path="/admin/study_edit"
               exact
+              {...this.props}
               component={AdminAddEditStudy}
             />
-            <Route path="/admin/track" exact component={AdminTrack} />
-            <Route
+            <PrivateRoute
+              path="/admin/track"
+              {...this.props}
+              exact
+              component={AdminTrack}
+            />
+            <PrivateRoute
+              {...this.props}
               path="/admin/track_edit/:id"
               exact
               component={AdminAddEditTrack}
             />
-            <Route
+            <PrivateRoute
               path="/admin/track_edit"
               exact
+              {...this.props}
               component={AdminAddEditTrack}
             />
-          </AdminPages>
-          <Pages>
-            <Route path="/books" exact component={Books} />
-            <Route path="/lesson/:id" exact component={Adult} />
-            <Route path="/lesson_junior/:id" exact component={Junior} />
-            <Route path="/lesson_elem/:id" exact component={Elem} />
-            <Route path="/view_book/:id" exact component={BookDetail} />
-            <Route path="/song/:id" exact component={SongDetails} />
-            <Route path="/chorus/:id" exact component={ChorusDetails} />
-            <Route path="/cgs" exact component={Cgs} />
-            <Route path="/lessons" exact component={Sunday} />
-            <Route path="/info" exact component={Info} />
-            <Route path="/locate" exact component={Location} />
-            <Route path="/tracts" exact component={Tracks} />
-            <Route path="/tract/:id" exact component={TractDetails} />
-            <Route path="/study/:id" exact component={StudyDetails} />
-            <Route path="/study" exact component={Study} />
-            <Route path="/signin" exact component={SignIn} />
+
+            <PublicRoute path="/books" exact component={Books} {...this.props} />
+            <PublicRoute
+              path="/lesson/:id"
+              exact
+              component={Adult}
+              {...this.props}
+            />
+            <PublicRoute path="/lesson_junior/:id" exact component={Junior} {...this.props} />
+            <PublicRoute
+              path="/lesson_elem/:id"
+              exact
+              component={Elem}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/view_book/:id"
+              exact
+              component={BookDetail}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/song/:id"
+              exact
+              component={SongDetails}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/chorus/:id"
+              exact
+              component={ChorusDetails}
+              {...this.props}
+            />
+            
+            <PublicRoute path="/cgs" exact component={Cgs} {...this.props} />
+            <PublicRoute path="/lessons" exact component={Sunday} {...this.props} />
+            <PublicRoute path="/info" exact component={Info} {...this.props} />
+            <PublicRoute path="/locate" exact component={Location} {...this.props} />
+            <PublicRoute path="/tracts" exact component={Tracks} {...this.props} />
+            <PublicRoute
+              path="/tract/:id"
+              exact
+              component={TractDetails}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/study/:id"
+              exact
+              component={StudyDetails}
+              {...this.props}
+            />
+            <PublicRoute path="/study" exact component={Study} {...this.props} />
+            <PublicRoute path="/signin" exact component={SignIn} {...this.props} />
           </Pages>
         </Switch>
         <Footer />

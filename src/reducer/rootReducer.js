@@ -1,9 +1,9 @@
 import { combineReducers } from "redux";
 
-import auth from "./auth";
+import setting from "./setting";
 
 const rootReducer = combineReducers({
-  isAuth: auth
+  isLang: setting
   });
   
   export default rootReducer;
