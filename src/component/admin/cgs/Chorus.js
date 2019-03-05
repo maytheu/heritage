@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
+import { connect} from 'react-redux'
 
 import { firebaseChorus } from '../../../firebase';
 import { Spinner, firebaseLooper } from "../../utils/misc";
@@ -12,7 +13,7 @@ class Chorus extends Component {
 
     componentDidMount() {
         firebaseChorus
-          .child("en")
+          .child(this.props.lang.lang)
           .orderByKey()
           .limitToLast(20)
           .once("value")
@@ -24,6 +25,21 @@ class Chorus extends Component {
             });
           });
       }
+      componentDidUpdate(prevProps) {
+        if (this.props.lang.lang !== prevProps.lang.lang) {
+          firebaseChorus
+          .child(this.props.lang.lang)
+          .orderByKey()
+          .limitToLast(20)
+          .once("value")
+          .then(snapshot => {
+              const chorus = firebaseLooper(snapshot)
+              this.setState({
+                chorus,
+                isLoading: false
+            });
+          });
+        }}
 
     render() {
         return (
@@ -57,4 +73,8 @@ class Chorus extends Component {
     }
 }
 
-export default Chorus;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+
+export default connect(mapStateToProps)(Chorus);

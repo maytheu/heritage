@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import { Spinner } from "../../utils/misc";
 import { firebaseCgs } from "../../../firebase";
@@ -21,11 +22,11 @@ class SongDetails extends Component {
       });
     };
     const songID = this.props.match.params.id;
-    if (songID === '404') {
+    if (songID === "404") {
       this.props.history.push("/cgs");
     } else {
       firebaseCgs
-        .child("en")
+        .child(this.props.lang.lang)
         .child(songID)
         .once("value", function(snapshot) {
           let response = snapshot.val();
@@ -53,4 +54,7 @@ class SongDetails extends Component {
   }
 }
 
-export default SongDetails;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(SongDetails);

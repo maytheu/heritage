@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import InputField from "../../utils/InputField";
 import { firebaseCgs, firebaseDB, firebaseChorus } from "../../../firebase";
@@ -95,16 +96,15 @@ class AddEditCgs extends Component {
 
   componentDidMount() {
     const songID = this.props.match.params.id;
-     if (songID) {
-       firebaseDB
-         .ref(`cgs/en/${songID}`)
-         .once("value")
-         .then(snapshot => {
-           const songData = snapshot.val();
-           this.updateField(songData, songID, "Edit Cgs");
-         });
-     }
-    
+    if (songID) {
+      firebaseDB
+        .ref(`cgs/${this.props.lang.lang}/${songID}`)
+        .once("value")
+        .then(snapshot => {
+          const songData = snapshot.val();
+          this.updateField(songData, songID, "Edit Cgs");
+        });
+    }
   }
 
   valueChangedHandler = (element, content = "") => {
@@ -152,7 +152,7 @@ class AddEditCgs extends Component {
           song: submitData.song
         };
         firebaseDB
-          .ref(`cgs/en/${this.state.cgsId}`)
+          .ref(`cgs/${this.props.lang.lang}/${this.state.cgsId}`)
           .update(songDetails)
           .then(() => {
             this.setState({ formSuccess: "Success", isLoading: false });
@@ -160,7 +160,7 @@ class AddEditCgs extends Component {
           .catch(e => {
             this.setState({ formError: true, isLoading: false });
           });
-      } else if(this.state.isPage) {
+      } else if (this.state.isPage) {
         let songDetails = {
           title: submitData.title,
           number: submitData.number,
@@ -183,7 +183,7 @@ class AddEditCgs extends Component {
           .catch(e => {
             this.setState({ formError: true, isLoading: false });
           });
-      } else if(!this.state.isPage) {
+      } else if (!this.state.isPage) {
         let songDetails = {
           title: submitData.title,
           number: submitData.number,
@@ -306,4 +306,9 @@ class AddEditCgs extends Component {
   }
 }
 
-export default AddEditCgs;
+
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+
+export default connect(mapStateToProps)(AddEditCgs);

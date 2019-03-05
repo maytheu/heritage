@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import { firebaseAdult } from "../../../firebase";
 import { Spinner } from "../../utils/misc";
@@ -26,7 +27,7 @@ class Adult extends Component {
     };
     const lessonID = this.props.match.params.id;
     firebaseAdult
-      .child("en")
+      .child(this.props.lang.lang)
       .child(lessonID)
       .once("value", function(snapshot) {
         const title = snapshot.val().title;
@@ -57,4 +58,7 @@ class Adult extends Component {
   }
 }
 
-export default Adult;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Adult);

@@ -38,6 +38,9 @@ import Elem from "./component/category/sunday/Elem";
 import SignIn from "./component/admin/SignIn";
 import PrivateRoute from "./component/utils/authRoute/PrivateRoute";
 import PublicRoute from "./component/utils/authRoute/publicRoute";
+import NotFound from "./component/utils/NotFound";
+import About from "./component/category/About";
+import Steps from "./component/category/Steps";
 
 class App extends Component {
   render() {
@@ -137,7 +140,12 @@ class App extends Component {
               {...this.props}
               component={AdminAddEditLocation}
             />
-            <PrivateRoute path="/admin/study" exact component={AdminStudy} {...this.props} />
+            <PrivateRoute
+              path="/admin/study"
+              exact
+              component={AdminStudy}
+              {...this.props}
+            />
             <PrivateRoute
               {...this.props}
               path="/admin/study_edit/:id"
@@ -169,59 +177,140 @@ class App extends Component {
               component={AdminAddEditTrack}
             />
 
-            <PublicRoute path="/books" exact component={Books} {...this.props} />
+            <PublicRoute
+              path="/books"
+              exact
+              restricted={false}
+              component={Books}
+              {...this.props}
+            />
             <PublicRoute
               path="/lesson/:id"
+              restricted={false}
               exact
               component={Adult}
               {...this.props}
             />
-            <PublicRoute path="/lesson_junior/:id" exact component={Junior} {...this.props} />
+            <PublicRoute
+              path="/lesson_junior/:id"
+              exact
+              component={Junior}
+              {...this.props}
+              restricted={false}
+            />
             <PublicRoute
               path="/lesson_elem/:id"
               exact
+              restricted={false}
               component={Elem}
               {...this.props}
             />
             <PublicRoute
               path="/view_book/:id"
               exact
+              restricted={false}
               component={BookDetail}
               {...this.props}
             />
             <PublicRoute
               path="/song/:id"
               exact
+              restricted={false}
               component={SongDetails}
               {...this.props}
             />
             <PublicRoute
               path="/chorus/:id"
+              restricted={false}
               exact
               component={ChorusDetails}
               {...this.props}
             />
-            
-            <PublicRoute path="/cgs" exact component={Cgs} {...this.props} />
-            <PublicRoute path="/lessons" exact component={Sunday} {...this.props} />
-            <PublicRoute path="/info" exact component={Info} {...this.props} />
-            <PublicRoute path="/locate" exact component={Location} {...this.props} />
-            <PublicRoute path="/tracts" exact component={Tracks} {...this.props} />
+
+            <PublicRoute
+              path="/cgs"
+              restricted={false}
+              exact
+              component={Cgs}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/lessons"
+              exact
+              restricted={false}
+              component={Sunday}
+              {...this.props}
+            />
+            <PublicRoute
+              restricted={false}
+              path="/info"
+              exact
+              component={Info}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/locate"
+              exact
+              restricted={false}
+              component={Location}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/tracts"
+              exact
+              restricted={false}
+              component={Tracks}
+              {...this.props}
+            />
             <PublicRoute
               path="/tract/:id"
               exact
+              restricted={false}
               component={TractDetails}
               {...this.props}
             />
             <PublicRoute
               path="/study/:id"
               exact
+              restricted={false}
               component={StudyDetails}
               {...this.props}
             />
-            <PublicRoute path="/study" exact component={Study} {...this.props} />
-            <PublicRoute path="/signin" exact component={SignIn} {...this.props} />
+            <PublicRoute
+              path="/study"
+              exact
+              restricted={false}
+              component={Study}
+              {...this.props}
+            />
+            <PublicRoute
+              path="/signin"
+              restricted={true}
+              exact
+              component={SignIn}
+              {...this.props}
+            />
+            <PublicRoute
+              {...this.props}
+              exact
+              path="/about"
+              restricted={false}
+              component={About}
+            />
+            <PublicRoute
+              {...this.props}
+              exact
+              path="/steps"
+              restricted={false}
+              component={Steps}
+            />
           </Pages>
+          <PublicRoute
+              {...this.props}
+              exact
+              restricted={false}
+              component={NotFound}
+            />
         </Switch>
         <Footer />
       </div>

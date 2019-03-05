@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
 import { firebaseChorus } from "../../../firebase";
 import { Spinner } from "../../utils/misc";
 
@@ -28,7 +30,7 @@ class ChorusDetails extends Component {
       let song = "";
       let title = null;
       firebaseChorus
-        .child("en")
+        .child(this.props.lang.lang)
         .child(songID)
         .once("value", function(snapshot) {
           let response = snapshot.val();
@@ -56,4 +58,7 @@ class ChorusDetails extends Component {
   }
 }
 
-export default ChorusDetails;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(ChorusDetails);

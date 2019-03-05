@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { firebaseAdult, firebaseJunior } from "../../../firebase";
 import { firebaseLooper, Spinner } from "../../utils/misc";
@@ -15,7 +16,7 @@ class BookDetail extends Component {
   componentDidMount() {
     const lessonID = this.props.match.params.id;
     firebaseAdult
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByChild("book")
       .equalTo(lessonID)
       .once("value")
@@ -31,7 +32,7 @@ class BookDetail extends Component {
       });
 
     firebaseJunior
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByChild("book")
       .equalTo(lessonID)
       .once("value")
@@ -39,7 +40,7 @@ class BookDetail extends Component {
         const lessonJunior = firebaseLooper(snapshot);
         this.setState({
           lessonJunior,
-          isLoading: false,
+          isLoading: false
         });
       })
       .catch(e => {
@@ -52,11 +53,7 @@ class BookDetail extends Component {
       ? lessons.map(lesson => (
           <div key={lesson.id}>
             <Link
-              to={
-                type 
-                  ? `/lesson_junior/${lesson.id}`
-                  : `/lesson/${lesson.id}`
-              }
+              to={type ? `/lesson_junior/${lesson.id}` : `/lesson/${lesson.id}`}
             >
               <div>{lesson.number}</div>
               <div>{lesson.title}</div>
@@ -79,4 +76,7 @@ class BookDetail extends Component {
   }
 }
 
-export default BookDetail;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(BookDetail);

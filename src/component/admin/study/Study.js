@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { firebaseStudy } from "../../../firebase";
 import { Spinner, firebaseLooper } from "../../utils/misc";
@@ -12,7 +13,7 @@ class Study extends Component {
 
   componentDidMount() {
     firebaseStudy
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByKey()
       .limitToLast(20)
       .once("value")
@@ -23,6 +24,23 @@ class Study extends Component {
           isLoading: false
         });
       });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      firebaseStudy
+        .child(this.props.lang.lang)
+        .orderByKey()
+        .limitToLast(20)
+        .once("value")
+        .then(snapshot => {
+          const study = firebaseLooper(snapshot);
+          this.setState({
+            study,
+            isLoading: false
+          });
+        });
+    }
   }
 
   render() {
@@ -61,4 +79,8 @@ class Study extends Component {
   }
 }
 
-export default Study;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+
+export default connect(mapStateToProps)(Study);

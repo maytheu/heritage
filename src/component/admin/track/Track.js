@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { firebaseTract } from "../../../firebase";
 import { Spinner, firebaseLooper } from "../../utils/misc";
@@ -12,7 +13,7 @@ class Track extends Component {
 
   componentDidMount() {
     firebaseTract
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const tract = firebaseLooper(snapshot);
@@ -56,4 +57,7 @@ class Track extends Component {
   }
 }
 
-export default Track;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Track);

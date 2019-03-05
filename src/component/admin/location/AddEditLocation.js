@@ -181,7 +181,6 @@ class AddEditLocation extends Component {
     const address = this.state.formData.address;
     const telephone = this.state.formData.telephone;
     const name = this.state.formData.name;
-
     return (
       <div className="container">
         <h3>{this.state.isPage}</h3>

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { firebaseDB, firebaseElem } from "../../../firebase";
 import { checkValidityInput } from "../../utils/checkValidity";
@@ -142,7 +143,7 @@ class AddEditElem extends Component {
       });
     } else {
       firebaseDB
-        .ref(`elem/en/${lessonID}`)
+        .ref(`elem/${this.props.lang.lang}/${lessonID}`)
         .once("value")
         .then(snapshot => {
           const lessonData = snapshot.val();
@@ -199,7 +200,7 @@ class AddEditElem extends Component {
           book: submitData.book
         };
         firebaseDB
-          .ref(`elem/en/${this.state.lessonId}`)
+          .ref(`elem/${this.props.lang.lang}/${this.state.lessonId}`)
           .update(lessonDetails)
           .then(() => {
             this.setState({ formSuccess: "Success", isLoading: false });
@@ -341,4 +342,7 @@ class AddEditElem extends Component {
   }
 }
 
-export default AddEditElem;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(AddEditElem);

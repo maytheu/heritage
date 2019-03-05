@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 
 import { firebaseCgs } from "../../../firebase";
 import { Spinner, firebaseLooper } from "../../utils/misc";
@@ -16,7 +16,7 @@ class Cgs extends Component {
 
   componentDidMount() {
     firebaseCgs
-      .child(this.props.lang.lang || 'en')
+      .child(this.props.lang.lang)
       .orderByKey()
       .once("value")
       .then(snapshot => {
@@ -28,6 +28,22 @@ class Cgs extends Component {
       });
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      firebaseCgs
+        .child(this.props.lang.lang)
+        .orderByKey()
+        .once("value")
+        .then(snapshot => {
+          const song = firebaseLooper(snapshot);
+          this.setState({
+            song,
+            isLoading: false
+          });
+        });
+    }
+  }
+
   showChorus = () => {
     this.setState({ isShowChorus: true });
   };
@@ -37,7 +53,6 @@ class Cgs extends Component {
   };
 
   render() {
-    console.log(this.props.lang.lang)
     return (
       <div className="container">
         <div>
@@ -65,12 +80,12 @@ class Cgs extends Component {
           </table>
         </div>
         {this.state.isLoading ? <Spinner /> : ""}
-        <Modal display={this.state.isShowChorus} close={this.closeChorus} >
-        <Chorus />
+        <Modal display={this.state.isShowChorus} close={this.closeChorus}>
+          <Chorus />
         </Modal>
-        {!this.state.isShowChorus ? 
-        <button onClick={this.showChorus}>View Chorus</button>
-        : null}
+        {!this.state.isShowChorus ? (
+          <button onClick={this.showChorus}>View Chorus</button>
+        ) : null}
       </div>
     );
   }

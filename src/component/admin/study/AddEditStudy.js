@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import InputField from "../../utils/InputField";
 import { Spinner } from "../../utils/misc";
@@ -125,7 +126,7 @@ class AddEditStudy extends Component {
       });
     } else {
       firebaseDB
-        .ref(`study/en/${studyID}`)
+        .ref(`study/${this.props.lang.lang}/${studyID}`)
         .once("value")
         .then(snapshot => {
           const studyData = snapshot.val();
@@ -182,7 +183,7 @@ class AddEditStudy extends Component {
       };
       if (this.state.isPage === "Edit Outline") {
         firebaseDB
-          .ref(`study/en/${this.state.studyId}`)
+          .ref(`study/${this.props.lang.lang}/${this.state.studyId}`)
           .update(studyDetails)
           .then(() => {
             this.setState({ formSuccess: "Success", isLoading: false });
@@ -190,7 +191,7 @@ class AddEditStudy extends Component {
           .catch(e => {
             this.setState({ formError: true, isLoading: false });
           });
-      } else {        
+      } else {
         firebaseStudy
           .child(submitData.language)
           .push(studyDetails)
@@ -297,4 +298,7 @@ class AddEditStudy extends Component {
   }
 }
 
-export default AddEditStudy;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(AddEditStudy);

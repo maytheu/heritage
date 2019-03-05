@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import "./Cgs.css";
 import InputField from "../../utils/InputField";
@@ -66,7 +67,7 @@ class Cgs extends Component {
 
   componentDidMount() {
     firebaseChorus
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const chorusSong = firebaseLooper(snapshot);
@@ -77,7 +78,7 @@ class Cgs extends Component {
       });
 
     firebaseCgs
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const cgsSong = firebaseLooper(snapshot);
@@ -116,7 +117,7 @@ class Cgs extends Component {
     const cgsSearch = this.state.formData.search.value;
     if (this.state.isValidForm && type === "cgs") {
       firebaseCgs
-        .child("en")
+        .child(this.props.lang.lang)
         .orderByChild("number")
         .equalTo(value)
         .once("value")
@@ -273,4 +274,7 @@ class Cgs extends Component {
   }
 }
 
-export default Cgs;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Cgs);

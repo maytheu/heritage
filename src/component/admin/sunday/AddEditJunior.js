@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import InputField from "../../utils/InputField";
 import { Spinner } from "../../utils/misc";
@@ -142,7 +143,7 @@ class AddEditJunior extends Component {
       });
     } else {
       firebaseDB
-        .ref(`junior/en/${lessonID}`)
+        .ref(`junior/${this.props.lang.lang}/${lessonID}`)
         .once("value")
         .then(snapshot => {
           const lessonData = snapshot.val();
@@ -199,7 +200,7 @@ class AddEditJunior extends Component {
           book: submitData.book
         };
         firebaseDB
-          .ref(`junior/en/${this.state.lessonId}`)
+          .ref(`junior/${this.props.lang.lang}/${this.state.lessonId}`)
           .update(lessonDetails)
           .then(() => {
             this.setState({ formSuccess: "Success", isLoading: false });
@@ -341,4 +342,7 @@ class AddEditJunior extends Component {
   }
 }
 
-export default AddEditJunior;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(AddEditJunior);

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+
 import InputField from "../../utils/InputField";
 import { Spinner, firebaseLooper } from "../../utils/misc";
 import { firebaseTract } from "../../../firebase";
@@ -28,7 +30,7 @@ class Tracks extends Component {
 
   componentDidMount() {
     firebaseTract
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByKey()
       .limitToLast(20)
       .once("value")
@@ -81,4 +83,7 @@ class Tracks extends Component {
   }
 }
 
-export default Tracks;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Tracks);

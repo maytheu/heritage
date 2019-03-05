@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import { checkValidityInput } from "../../utils/checkValidity";
 import InputField from "../../utils/InputField";
@@ -30,7 +31,7 @@ class Study extends Component {
 
   componentDidMount() {
     firebaseStudy
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByKey()
       .limitToLast(20)
       .once("value")
@@ -70,14 +71,14 @@ class Study extends Component {
     const value = this.state.formData.search.value;
     if (this.state.isValidForm) {
       firebaseStudy
-        .child("en")
+        .child(this.props.lang.lang)
         .orderByChild("lesson")
         .startAt(value)
         .endAt(value)
         .once("value")
         .then(snapshot => {
           let study = firebaseLooper(snapshot);
-          console.log(snapshot)
+          console.log(snapshot);
           this.setState({
             study,
             isLoading: false
@@ -91,7 +92,9 @@ class Study extends Component {
       study.map(outline => (
         <Link to={`study/${outline.id}`} key={outline.id}>
           <div className="chorus">
-            <div><b>{outline.classType}</b></div>
+            <div>
+              <b>{outline.classType}</b>
+            </div>
             <div>{outline.title}</div>
             <div>{outline.verse}</div>
           </div>
@@ -104,7 +107,6 @@ class Study extends Component {
     );
 
   render() {
-    console.log(this.state.study);
     const outline = this.state.formData.search;
     return (
       <div className="container">
@@ -129,4 +131,7 @@ class Study extends Component {
   }
 }
 
-export default Study;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Study);

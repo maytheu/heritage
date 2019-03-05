@@ -8,8 +8,8 @@ const SideDrawer = props => {
   const adminLists = [
     { name: "Cgs", linkTo: "/admin/cgs" },
     { name: "Add Cgs", linkTo: "/admin/cgs_edit" },
-    { name: "Lessons", linkTo: "/admin/lessons" },
-    { name: "Add Lesson", linkTo: "/admin/lessons_edit" },
+    { name: "Sunday School", linkTo: "/admin/lessons" },
+    { name: "Add Sunday School", linkTo: "/admin/lessons_edit" },
     { name: "Location", linkTo: "/admin/location" },
     { name: "Add Location", linkTo: "/admin/location_edit" },
     { name: "Bible Study", linkTo: "/admin/study" },
@@ -18,8 +18,13 @@ const SideDrawer = props => {
     { name: "Add Tracts", linkTo: "/admin/track_edit" }
   ];
   const lists = [
+    { name: "About Us", linkTo: "/about" },
+    { name: "Church Address", linkTo: "/locate" },
+    { name: "Steps To Deliverance", linkTo: "/steps" },
+    { name: "Sunday School", linkTo: "/lessons" },
+    { name: "Bible Study", linkTo: "/study" },
     { name: "Cgs", linkTo: "/cgs" },
-    { name: "Lessons", linkTo: "/lessons" }
+    { name: "Tracts", linkTo: "/tracts" }
   ];
   const logoutHandler = () => {
     firebase.auth().signOut();

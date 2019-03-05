@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import InputField from "../../utils/InputField";
 import { Spinner } from "../../utils/misc";
@@ -92,7 +93,7 @@ class AddEditTrack extends Component {
     });
   };
 
-  componentDidMount(){
+  componentDidMount() {
     const tractID = this.props.match.params.id;
     if (!tractID) {
       this.setState({
@@ -100,7 +101,7 @@ class AddEditTrack extends Component {
       });
     } else {
       firebaseDB
-        .ref(`tract/en/${tractID}`)
+        .ref(`tract/${this.props.lang.lang}/${tractID}`)
         .once("value")
         .then(snapshot => {
           const tractData = snapshot.val();
@@ -154,7 +155,7 @@ class AddEditTrack extends Component {
           notes: submitData.notes
         };
         firebaseDB
-          .ref(`tract/en/${this.state.tractId}`)
+          .ref(`tract/${this.props.lang.lang}/${this.state.tractId}`)
           .update(noteDetails)
           .then(() => {
             this.setState({ formSuccess: "Success", isLoading: false });
@@ -262,4 +263,7 @@ class AddEditTrack extends Component {
   }
 }
 
-export default AddEditTrack;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(AddEditTrack);

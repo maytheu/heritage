@@ -1,11 +1,11 @@
 import React from "react";
-
+ 
 import "./InputField.css";
 
 const InputField = props => {
   let inputElement = null;
   const validateInputClass = ["inputElement"];
-  if (props.invalid && props.shouldValidate && props.touched) {
+  if (props.invalid && props.touched) {
     validateInputClass.push("invalid");
   }
   switch (props.elementType) {

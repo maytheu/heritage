@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import { firebaseStudy } from "../../../firebase";
 import { Spinner } from "../../utils/misc";
@@ -18,7 +19,7 @@ class StudyDetails extends Component {
     const studyID = this.props.match.params.id;
     if (studyID) {
       firebaseStudy
-        .child("en")
+        .child(this.props.lang.lang)
         .child(studyID)
         .once("value")
         .then(snapshot => {
@@ -61,4 +62,7 @@ class StudyDetails extends Component {
   }
 }
 
-export default StudyDetails;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(StudyDetails);

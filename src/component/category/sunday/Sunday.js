@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
 import InputField from "../../utils/InputField";
-import { Spinner, firebaseLooper } from "../../utils/misc";
+import { Spinner, firebaseLooper, thisWeek } from "../../utils/misc";
 import { checkValidityInput } from "../../utils/checkValidity";
 import { firebaseAdult, firebaseJunior, firebaseElem } from "../../../firebase";
 
@@ -58,15 +59,15 @@ class Sunday extends Component {
   };
 
   componentDidMount() {
-    // let lessonID = thisWeek(9);
-    // let elemID = thisWeek(3);
+    let lessonID = thisWeek(9);
+    let elemID = thisWeek(3);
 
     this.queryDatabase();
 
     firebaseAdult
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByChild("number")
-      .equalTo("213")
+      .equalTo(lessonID)
       .once("value")
       .then(snapshot => {
         snapshot.forEach(userSnapshot => {
@@ -93,9 +94,9 @@ class Sunday extends Component {
       });
 
     firebaseJunior
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByChild("number")
-      .equalTo("27")
+      .equalTo(lessonID)
       .once("value")
       .then(snapshot => {
         snapshot.forEach(userSnapshot => {
@@ -122,9 +123,9 @@ class Sunday extends Component {
       });
 
     firebaseElem
-      .child("en")
+      .child(this.props.lang.lang)
       .orderByChild("number")
-      .equalTo("1")
+      .equalTo(elemID)
       .once("value")
       .then(snapshot => {
         snapshot.forEach(userSnapshot => {
@@ -174,7 +175,7 @@ class Sunday extends Component {
 
   queryDatabase = () => {
     firebaseAdult
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const adultLessons = firebaseLooper(snapshot);
@@ -185,7 +186,7 @@ class Sunday extends Component {
       });
 
     firebaseJunior
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const juniorLessons = firebaseLooper(snapshot);
@@ -196,7 +197,7 @@ class Sunday extends Component {
       });
 
     firebaseElem
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const elemLessons = firebaseLooper(snapshot);
@@ -352,4 +353,7 @@ class Sunday extends Component {
   }
 }
 
-export default Sunday;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Sunday);

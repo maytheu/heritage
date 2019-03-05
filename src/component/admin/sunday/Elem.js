@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+
 import { firebaseElem } from "../../../firebase";
 import { firebaseLooper, Spinner } from "../../utils/misc";
 
@@ -12,7 +14,7 @@ class Elem extends Component {
 
   componentDidMount() {
     firebaseElem
-      .child("en")
+      .child(this.props.lang.lang)
       .once("value")
       .then(snapshot => {
         const lessons = firebaseLooper(snapshot);
@@ -62,4 +64,7 @@ class Elem extends Component {
   }
 }
 
-export default Elem;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(Elem);

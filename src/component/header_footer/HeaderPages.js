@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+
 import ToggleMenu from "./ToggleMenu";
 import SideDrawer from "./SideDrawer";
 import Settings from "./Settings";
@@ -11,6 +12,7 @@ class HeaderPages extends Component {
     showSettings: false
   };
 
+
   closeSideDrawerHandler = () => {
     this.setState({ showSideDrawer: false });
   };
@@ -19,6 +21,10 @@ class HeaderPages extends Component {
     this.setState(prevState => {
       return { showSideDrawer: !prevState.showSideDrawer };
     });
+  };
+
+  closeSettingsHandler = () => {
+    this.setState({ showSettings: false });
   };
 
   showSettingsHandler = () => {
@@ -40,7 +46,7 @@ class HeaderPages extends Component {
             settings
           </i>
         </div>
-        <Modal display={this.state.showSettings} close={this.closeChorus}>
+        <Modal display={this.state.showSettings} close={this.closeSettingsHandler}>
           <Settings />
         </Modal>
       </header>
@@ -48,4 +54,4 @@ class HeaderPages extends Component {
   }
 }
 
-export default HeaderPages;
+export default (HeaderPages);

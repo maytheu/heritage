@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 
 import { firebaseTract } from "../../../firebase";
 import { Spinner } from "../../utils/misc";
@@ -17,7 +18,7 @@ class TractDetails extends Component {
     const tractID = this.props.match.params.id;
     if (tractID) {
       firebaseTract
-        .child("en")
+        .child(this.props.lang.lang)
         .child(tractID)
         .once("value")
         .then(snapshot => {
@@ -58,4 +59,7 @@ class TractDetails extends Component {
   }
 }
 
-export default TractDetails;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+export default connect(mapStateToProps)(TractDetails);

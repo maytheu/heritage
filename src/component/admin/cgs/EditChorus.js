@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import {connect} from 'react-redux'
 
 import InputField from "../../utils/InputField";
 import { firebaseDB } from "../../../firebase";
@@ -95,7 +96,7 @@ class EditChorus extends Component {
     const chorusID = this.props.match.params.id;
     if (chorusID) {
       firebaseDB
-        .ref(`chorus/en/${chorusID}`)
+        .ref(`chorus/${this.props.lang.lang}/${chorusID}`)
         .once("value")
         .then(snapshot => {
           const songData = snapshot.val();
@@ -232,4 +233,8 @@ class EditChorus extends Component {
   }
 }
 
-export default EditChorus;
+function mapStateToProps(state) {
+  return { lang: state.isLang };
+}
+
+export default connect(mapStateToProps)(EditChorus);
