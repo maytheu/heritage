@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 
-
 import ToggleMenu from "./ToggleMenu";
 import SideDrawer from "./SideDrawer";
 import Settings from "./Settings";
@@ -11,7 +10,6 @@ class HeaderPages extends Component {
     showSideDrawer: false,
     showSettings: false
   };
-
 
   closeSideDrawerHandler = () => {
     this.setState({ showSideDrawer: false });
@@ -54,4 +52,4 @@ class HeaderPages extends Component {
   }
 }
 
-export default (HeaderPages);
+export default HeaderPages;

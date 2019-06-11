@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 import InputField from "../../utils/InputField";
 import { firebaseDB } from "../../../firebase";
@@ -14,6 +18,7 @@ class EditChorus extends Component {
     formSuccess: "",
     formError: false,
     isLoading: false,
+    editorState: EditorState.createEmpty(),
     formData: {
       language: {
         elementType: "select",
@@ -62,23 +67,11 @@ class EditChorus extends Component {
         },
         valid: false,
         touch: false
-      },
-      song: {
-        elementType: "textarea",
-        elementConfig: {
-          placeholder: "Song Details"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
       }
     }
   };
 
-  updateField = (data, id, type) => {
+  updateField = (data,editorState, id, type) => {
     const newFormData = { ...this.state.formData };
     for (let key in newFormData) {
       newFormData[key].value = data[key];
@@ -87,6 +80,7 @@ class EditChorus extends Component {
 
     this.setState({
       formData: newFormData,
+      editorState,
       chorusId: id,
       isPage: type
     });
@@ -95,12 +89,17 @@ class EditChorus extends Component {
   componentDidMount() {
     const chorusID = this.props.match.params.id;
     if (chorusID) {
+      document.title = "Edit Chorus";
       firebaseDB
         .ref(`chorus/${this.props.lang.lang}/${chorusID}`)
         .once("value")
         .then(snapshot => {
           const songData = snapshot.val();
-          this.updateField(songData, chorusID, "Edit Chorus");
+          const contentState = ContentState.createFromBlockArray(
+            htmlToDraft(songData.song).contentBlocks
+          );
+          const editorState = EditorState.createWithContent(contentState);
+          this.updateField(songData, editorState, chorusID, "Edit Chorus");
         });
     }
   }
@@ -133,6 +132,12 @@ class EditChorus extends Component {
     this.setState({ formData: updatedOrderForm, isValidForm: formValid });
   };
 
+  onEditorStateChange = editorState => {
+    this.setState({
+      editorState
+    });
+  };
+
   submitForm = event => {
     event.preventDefault();
     this.setState({ isLoading: true });
@@ -142,11 +147,13 @@ class EditChorus extends Component {
       submitData[key] = this.state.formData[key].value;
       validForm = this.state.formData[key].valid && validForm;
     }
-
+    let convertedData = draftToHtml(
+      convertToRaw(this.state.editorState.getCurrentContent())
+    );
     if (validForm) {
       let songDetails = {
         title: submitData.title,
-        song: submitData.song
+        song: convertedData
       };
       firebaseDB
         .ref(`chorus/en/${this.state.chorusId}`)
@@ -162,9 +169,9 @@ class EditChorus extends Component {
 
   render() {
     const lang = this.state.formData.language;
-    const title = this.state.formData.title;
-    const number = this.state.formData.number;
-    const song = this.state.formData.song;
+    const {title} = this.state.formData;
+    const {number} = this.state.formData;
+    const {editorState} = this.state
     return (
       <div className="container">
         <h3>{this.state.isPage}</h3>
@@ -200,14 +207,12 @@ class EditChorus extends Component {
             touched={title.touch}
             changed={element => this.valueChangedHandler(element)}
           />
-          <InputField
-            id={"song"}
-            elementType={song.elementType}
-            elementConfig={song.elementConfig}
-            value={song.value}
-            invalid={!song.valid}
-            touched={song.touch}
-            changed={element => this.valueChangedHandler(element)}
+          <Editor
+            editorState={editorState}
+            wrapperClassName="demo-wrapper"
+            editorClassName="editer-content"
+            onBlur={() => this.setState({ valid: true })}
+            onEditorStateChange={this.onEditorStateChange}
           />
           <div>{this.state.formSuccess}</div>
           {this.state.formError ? <div>Error submitting form</div> : null}

@@ -83,8 +83,10 @@ class AddEditLocation extends Component {
   };
 
   componentDidMount() {
+    document.title = "Add New Church Address";
     const locationID = this.props.match.params.address;
     if (!locationID) {
+      document.title = "Edit Church Locaion";
       this.setState({
         isPage: "Add Location"
       });
@@ -156,10 +158,11 @@ class AddEditLocation extends Component {
           .then(() => {
             this.setState({
               formSuccess: "Update Successfully"
-            })
-            }).catch(e => {
-              this.setState({ formError: true });
+            });
           })
+          .catch(e => {
+            this.setState({ formError: true });
+          });
       } else {
         firebaselocation
           .push(submitData)

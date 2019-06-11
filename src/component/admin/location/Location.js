@@ -11,6 +11,7 @@ class Location extends Component {
   };
 
   componentDidMount() {
+    document.title = "Church Locations";
     firebaselocation.once("value").then(snapshot => {
       const location = firebaseLooper(snapshot);
       this.setState({

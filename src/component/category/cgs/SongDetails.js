@@ -13,6 +13,7 @@ class SongDetails extends Component {
   };
 
   componentDidMount() {
+    document.title = this.state.title;
     const getData = (id, title, song) => {
       this.setState({
         isLoading: false,
@@ -21,6 +22,7 @@ class SongDetails extends Component {
         songId: id
       });
     };
+    
     const songID = this.props.match.params.id;
     if (songID === "404") {
       this.props.history.push("/cgs");
@@ -47,7 +49,13 @@ class SongDetails extends Component {
           <div className="number">{this.state.songId}.</div>
           {this.state.title}
         </div>
-        <div className="">{this.state.song}</div>
+        <div className="">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: this.state.song
+            }}
+          />
+        </div>
       </div>
     );
     return <div className="container">{content}</div>;

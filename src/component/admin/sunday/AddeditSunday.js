@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 import InputField from "../../utils/InputField";
 import { Spinner } from "../../utils/misc";
@@ -15,6 +19,8 @@ class AddeditSunday extends Component {
     formSuccess: "",
     formError: false,
     isLoading: false,
+    editorState: EditorState.createEmpty(),
+    valid: false,
     formData: {
       language: {
         elementType: "select",
@@ -106,23 +112,11 @@ class AddeditSunday extends Component {
         },
         valid: false,
         touch: false
-      },
-      notes: {
-        elementType: "textarea",
-        elementConfig: {
-          placeholder: "Notes"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
       }
     }
   };
 
-  updateField = (data, id, type) => {
+  updateField = (data, editorState, id, type) => {
     const newFormData = { ...this.state.formData };
     for (let key in newFormData) {
       newFormData[key].value = data[key];
@@ -131,6 +125,7 @@ class AddeditSunday extends Component {
 
     this.setState({
       formData: newFormData,
+      editorState,
       lessonId: id,
       isPage: type
     });
@@ -139,16 +134,22 @@ class AddeditSunday extends Component {
   componentDidMount() {
     const lessonID = this.props.match.params.id;
     if (!lessonID) {
+      document.title = "Add New Lesson";
       this.setState({
         isPage: "Add Lesson"
       });
     } else {
+      document.title = "Edit Lesson";
       firebaseDB
         .ref(`adult/${this.props.lang.lang}/${lessonID}`)
         .once("value")
         .then(snapshot => {
           const lessonData = snapshot.val();
-          this.updateField(lessonData, lessonID, "Edit Lesson");
+          const contentState = ContentState.createFromBlockArray(
+            htmlToDraft(lessonData.notes).contentBlocks
+          );
+          const editorState = EditorState.createWithContent(contentState);
+          this.updateField(lessonData, editorState, lessonID, "Edit Lesson");
         });
     }
   }
@@ -181,6 +182,12 @@ class AddeditSunday extends Component {
     this.setState({ formData: updatedOrderForm, isValidForm: formValid });
   };
 
+  onEditorStateChange = editorState => {
+    this.setState({
+      editorState
+    });
+  };
+
   submitForm = event => {
     event.preventDefault();
     this.setState({ isLoading: true });
@@ -190,6 +197,9 @@ class AddeditSunday extends Component {
       submitData[key] = this.state.formData[key].value;
       validForm = this.state.formData[key].valid && validForm;
     }
+    let convertedData = draftToHtml(
+      convertToRaw(this.state.editorState.getCurrentContent())
+    );
 
     if (validForm) {
       if (this.state.isPage === "Edit Lesson") {
@@ -197,7 +207,7 @@ class AddeditSunday extends Component {
           title: submitData.title,
           memoryVerse: submitData.memoryVerse,
           reference: submitData.reference,
-          notes: submitData.notes,
+          notes: convertedData,
           book: submitData.book
         };
         firebaseDB
@@ -215,7 +225,7 @@ class AddeditSunday extends Component {
           number: submitData.number,
           memoryVerse: submitData.memoryVerse,
           reference: submitData.reference,
-          notes: submitData.notes,
+          notes: convertedData,
           book: submitData.book
         };
 
@@ -247,7 +257,7 @@ class AddeditSunday extends Component {
     const book = this.state.formData.book;
     const memoryVerse = this.state.formData.memoryVerse;
     const reference = this.state.formData.reference;
-    const notes = this.state.formData.notes;
+    const { editorState } = this.state;
     return (
       <div className="container">
         <h3>{this.state.isPage}</h3>
@@ -311,14 +321,12 @@ class AddeditSunday extends Component {
             touched={memoryVerse.touch}
             changed={element => this.valueChangedHandler(element)}
           />
-          <InputField
-            id={"notes"}
-            elementType={notes.elementType}
-            elementConfig={notes.elementConfig}
-            value={notes.value}
-            invalid={!notes.valid}
-            touched={notes.touch}
-            changed={element => this.valueChangedHandler(element)}
+          <Editor
+            editorState={editorState}
+            wrapperClassName="demo-wrapper"
+            editorClassName="editer-content"
+            onBlur={() => this.setState({ valid: true })}
+            onEditorStateChange={this.onEditorStateChange}
           />
           <div>{this.state.formSuccess}</div>
           {this.state.formError ? <div>Error submitting form</div> : null}

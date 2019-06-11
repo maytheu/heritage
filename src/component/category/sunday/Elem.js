@@ -46,7 +46,14 @@ class Elem extends Component {
             <div>{this.state.title}</div>
             <div>{this.state.reference}</div>
             <div>{this.state.memoryVerse}</div>
-            <div>{this.state.notes}</div>
+            <div>
+            <div
+            dangerouslySetInnerHTML={{
+              __html: this.state.notes
+            }}
+/>
+
+            </div>
             <div />
           </div>
         ) : (

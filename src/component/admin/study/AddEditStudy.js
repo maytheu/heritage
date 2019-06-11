@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 import InputField from "../../utils/InputField";
 import { Spinner } from "../../utils/misc";
@@ -14,6 +18,7 @@ class AddEditStudy extends Component {
     formSuccess: "",
     outline: [],
     formError: false,
+    editorState: EditorState.createEmpty(),
     formData: {
       language: {
         elementType: "select",
@@ -87,23 +92,10 @@ class AddEditStudy extends Component {
         },
         valid: false,
         touch: false
-      },
-      lesson: {
-        elementType: "textarea",
-        elementConfig: {
-          placeholder: "Lesson Details"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
-      }
-    }
+      }    }
   };
 
-  updateField = (data, id, type) => {
+  updateField = (data, editorState, id, type) => {
     const newFormData = { ...this.state.formData };
     for (let key in newFormData) {
       newFormData[key].value = data[key];
@@ -112,15 +104,18 @@ class AddEditStudy extends Component {
 
     this.setState({
       formData: newFormData,
+      editorState,
       studyId: id,
       isPage: type
     });
   };
 
   componentDidMount() {
+    document.title = "Add New Study Outline";
     const studyID = this.props.match.params.id;
 
     if (!studyID) {
+      document.title = "Edit Study Outline ";
       this.setState({
         isPage: "Add Outline"
       });
@@ -130,7 +125,11 @@ class AddEditStudy extends Component {
         .once("value")
         .then(snapshot => {
           const studyData = snapshot.val();
-          this.updateField(studyData, studyID, "Edit Outline");
+          const contentState = ContentState.createFromBlockArray(
+            htmlToDraft(studyData.song).contentBlocks
+          );
+          const editorState = EditorState.createWithContent(contentState);
+          this.updateField(studyData, editorState, studyID, "Edit Outline");
         });
     }
   }
@@ -162,6 +161,13 @@ class AddEditStudy extends Component {
     }
     this.setState({ formData: updatedOrderForm, isValidForm: formValid });
   };
+  
+  onEditorStateChange = editorState => {
+    this.setState({
+      editorState
+    });
+  };
+
 
   submitForm = event => {
     event.preventDefault();
@@ -172,6 +178,9 @@ class AddEditStudy extends Component {
       submitData[key] = this.state.formData[key].value;
       validForm = this.state.formData[key].valid && validForm;
     }
+    let convertedData = draftToHtml(
+      convertToRaw(this.state.editorState.getCurrentContent())
+    );
 
     if (validForm) {
       const studyDetails = {
@@ -179,7 +188,7 @@ class AddEditStudy extends Component {
         classType: submitData.classType,
         memoryVerse: submitData.memoryVerse,
         verse: submitData.verse,
-        lesson: submitData.lesson
+        lesson: convertedData
       };
       if (this.state.isPage === "Edit Outline") {
         firebaseDB
@@ -211,8 +220,8 @@ class AddEditStudy extends Component {
     const lang = this.state.formData.language;
     const classType = this.state.formData.classType;
     const title = this.state.formData.title;
+    const {editorState } = this.state
     const verse = this.state.formData.verse;
-    const lesson = this.state.formData.lesson;
     const memoryVerse = this.state.formData.memoryVerse;
 
     return (
@@ -266,14 +275,12 @@ class AddEditStudy extends Component {
             touched={memoryVerse.touch}
             changed={element => this.valueChangedHandler(element)}
           />
-          <InputField
-            id={"lesson"}
-            elementType={lesson.elementType}
-            elementConfig={lesson.elementConfig}
-            value={lesson.value}
-            invalid={!lesson.valid}
-            touched={lesson.touch}
-            changed={element => this.valueChangedHandler(element)}
+          <Editor
+            editorState={editorState}
+            wrapperClassName="demo-wrapper"
+            editorClassName="editer-content"
+            onBlur={() => this.setState({ valid: true })}
+            onEditorStateChange={this.onEditorStateChange}
           />
           <div>{this.state.formSuccess}</div>
           {this.state.formError ? <div>Error submitting form</div> : null}

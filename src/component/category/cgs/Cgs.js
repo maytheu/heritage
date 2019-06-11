@@ -66,6 +66,7 @@ class Cgs extends Component {
   };
 
   componentDidMount() {
+    document.title = "Cgs";
     firebaseChorus
       .child(this.props.lang.lang)
       .once("value")
@@ -208,7 +209,6 @@ class Cgs extends Component {
     const cgs = this.state.formData.cgs;
     const chorus = this.state.formData.chorus;
     const search = this.state.formData.search;
-
     return (
       <div className="container">
         <form

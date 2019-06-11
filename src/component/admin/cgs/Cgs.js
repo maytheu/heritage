@@ -75,7 +75,7 @@ class Cgs extends Component {
                       </td>
                     </tr>
                   ))
-                : ""}
+                : null}
             </tbody>
           </table>
         </div>

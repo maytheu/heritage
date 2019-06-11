@@ -55,7 +55,13 @@ class StudyDetails extends Component {
         <div className="title">{this.state.title}</div>
         <div className="">{this.state.verse}</div>
         <div className="">{this.state.memoryVerse}</div>
-        <div className="">{this.state.outline}</div>
+        <div className="">
+        <div
+            dangerouslySetInnerHTML={{
+              __html: this.state.outline
+            }}
+/>
+        </div>
       </div>
     );
     return <div className="container">{content}</div>;

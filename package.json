@@ -5,8 +5,10 @@
   "dependencies": {
     "draft-js": "^0.10.5",
     "draft-js-export-html": "^1.2.0",
+    "draftjs-to-html": "^0.8.4",
     "firebase": "^5.8.0",
     "for-editor": "0.0.11",
+    "html-to-draftjs": "^1.4.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-draft-wysiwyg": "^1.12.20",

@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 import InputField from "../../utils/InputField";
 import { firebaseCgs, firebaseDB, firebaseChorus } from "../../../firebase";
@@ -16,6 +20,7 @@ class AddEditCgs extends Component {
     formSuccess: "",
     formError: false,
     isLoading: false,
+    editorState: EditorState.createEmpty(),
     formData: {
       language: {
         elementType: "select",
@@ -64,23 +69,11 @@ class AddEditCgs extends Component {
         },
         valid: false,
         touch: false
-      },
-      song: {
-        elementType: "textarea",
-        elementConfig: {
-          placeholder: "Song Details"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
       }
     }
   };
 
-  updateField = (data, id, type) => {
+  updateField = (data, editorState, id, type) => {
     const newFormData = { ...this.state.formData };
     for (let key in newFormData) {
       newFormData[key].value = data[key];
@@ -89,6 +82,7 @@ class AddEditCgs extends Component {
 
     this.setState({
       formData: newFormData,
+      editorState,
       cgsId: id,
       isPage: type
     });
@@ -96,13 +90,19 @@ class AddEditCgs extends Component {
 
   componentDidMount() {
     const songID = this.props.match.params.id;
+    document.title = "Add Cgs";
     if (songID) {
+      document.title = "Edit Cgs";
       firebaseDB
         .ref(`cgs/${this.props.lang.lang}/${songID}`)
         .once("value")
         .then(snapshot => {
           const songData = snapshot.val();
-          this.updateField(songData, songID, "Edit Cgs");
+          const contentState = ContentState.createFromBlockArray(
+            htmlToDraft(songData.song).contentBlocks
+          );
+          const editorState = EditorState.createWithContent(contentState);
+          this.updateField(songData, editorState, songID, "Edit Cgs");
         });
     }
   }
@@ -135,6 +135,12 @@ class AddEditCgs extends Component {
     this.setState({ formData: updatedOrderForm, isValidForm: formValid });
   };
 
+  onEditorStateChange = editorState => {
+    this.setState({
+      editorState
+    });
+  };
+
   submitForm = event => {
     event.preventDefault();
     this.setState({ isLoading: true });
@@ -144,12 +150,15 @@ class AddEditCgs extends Component {
       submitData[key] = this.state.formData[key].value;
       validForm = this.state.formData[key].valid && validForm;
     }
+    let convertedData = draftToHtml(
+      convertToRaw(this.state.editorState.getCurrentContent())
+    );
 
     if (validForm) {
       if (this.state.isPage === "Edit Cgs") {
         let songDetails = {
           title: submitData.title,
-          song: submitData.song
+          song: convertedData
         };
         firebaseDB
           .ref(`cgs/${this.props.lang.lang}/${this.state.cgsId}`)
@@ -164,7 +173,7 @@ class AddEditCgs extends Component {
         let songDetails = {
           title: submitData.title,
           number: submitData.number,
-          song: submitData.song
+          song: convertedData
         };
         firebaseCgs
           .child(submitData.language)
@@ -187,7 +196,7 @@ class AddEditCgs extends Component {
         let songDetails = {
           title: submitData.title,
           number: submitData.number,
-          song: submitData.song
+          song: convertedData
         };
         firebaseChorus
           .child(submitData.language)
@@ -220,7 +229,7 @@ class AddEditCgs extends Component {
     const lang = this.state.formData.language;
     const title = this.state.formData.title;
     const number = this.state.formData.number;
-    const song = this.state.formData.song;
+    const { editorState } = this.state;
     return (
       <div className="container">
         <h3>
@@ -262,14 +271,12 @@ class AddEditCgs extends Component {
             touched={title.touch}
             changed={element => this.valueChangedHandler(element)}
           />
-          <InputField
-            id={"song"}
-            elementType={song.elementType}
-            elementConfig={song.elementConfig}
-            value={song.value}
-            invalid={!song.valid}
-            touched={song.touch}
-            changed={element => this.valueChangedHandler(element)}
+          <Editor
+            editorState={editorState}
+            wrapperClassName="demo-wrapper"
+            editorClassName="editer-content"
+            onBlur={() => this.setState({ valid: true })}
+            onEditorStateChange={this.onEditorStateChange}
           />
           <div>{this.state.formSuccess}</div>
           {this.state.formError ? <div>Error submitting form</div> : null}
@@ -305,7 +312,6 @@ class AddEditCgs extends Component {
     );
   }
 }
-
 
 function mapStateToProps(state) {
   return { lang: state.isLang };
