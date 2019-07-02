@@ -32,12 +32,16 @@
 }
 .container {
   width: 100%;
-  margin-top: 66px;
-  min-height: 76vh
+  min-height: 72vh
 }
 .form{
-  display: flex
+  display: flex;
+  margin-top: 10px;
 }
+form{
+  margin-bottom: 10px;
+}
+
 button {
   border: none;
   color: white;

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import firebase from "firebase/app";
 
 import { Spinner } from "../../utils/misc";
 import { firebaseCgs } from "../../../firebase";
@@ -13,7 +14,7 @@ class SongDetails extends Component {
   };
 
   componentDidMount() {
-    document.title = this.state.title;
+    document.title = `AFM - ${this.state.title}`;
     const getData = (id, title, song) => {
       this.setState({
         isLoading: false,
@@ -22,7 +23,7 @@ class SongDetails extends Component {
         songId: id
       });
     };
-    
+
     const songID = this.props.match.params.id;
     if (songID === "404") {
       this.props.history.push("/cgs");
@@ -37,6 +38,39 @@ class SongDetails extends Component {
           let title = response.title;
           getData(number, title, song);
         });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      const getData = (id, title, song) => {
+        this.setState({
+          isLoading: false,
+          title,
+          song,
+          songId: id
+        });
+      };
+
+      const songID = this.props.match.params.id;
+      if (songID === "404") {
+        this.props.history.push("/cgs");
+      } else {
+        firebase
+          .database()
+          .ref(`cgs/${this.props.lang.lang}`)
+          .orderByChild("number")
+          .equalTo(this.state.songId)
+          .once("value", function(snapshot) {
+            snapshot.forEach(childSnapshot => {
+              let response = childSnapshot.val();
+              let number = response.number;
+              let song = response.song;
+              let title = response.title;
+              getData(number, title, song);
+            });
+          });
+      }
     }
   }
 

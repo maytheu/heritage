@@ -15,6 +15,7 @@ class Adult extends Component {
   };
 
   componentDidMount() {
+    document.title = `AFM - Detail Lesson`;
     const getLesson = (title, notes, number, reference, memoryVerse) => {
       this.setState({
         title,
@@ -39,6 +40,36 @@ class Adult extends Component {
       });
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      const getLesson = (title, notes, number, reference, memoryVerse) => {
+        this.setState({
+          title,
+          number,
+          reference,
+          notes,
+          memoryVerse,
+          isLoading: false
+        });
+      };
+      firebaseAdult
+        .child(this.props.lang.lang)
+        .orderByChild("number")
+        .equalTo(this.state.number)
+        .once("value", function(snapshot) {
+          snapshot.forEach(childSnapshot => {
+            let response = childSnapshot.val();
+            const title = response.title;
+            const number = response.number;
+            const reference = response.reference;
+            const notes = response.notes;
+            const memoryVerse = response.memoryVerse;
+            getLesson(title, notes, number, reference, memoryVerse);
+          });
+        });
+    }
+  }
+
   showLesson = () =>
     !this.state.isLoading ? (
       <div>
@@ -46,13 +77,13 @@ class Adult extends Component {
         <div>{this.state.title}</div>
         <div>{this.state.reference}</div>
         <div>{this.state.memoryVerse}</div>
-        <div>   
-               <div
+        <div>
+          <div
             dangerouslySetInnerHTML={{
               __html: this.state.notes
             }}
-/>
-</div>
+          />
+        </div>
         <div />
       </div>
     ) : (

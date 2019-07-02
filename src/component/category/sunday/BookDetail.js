@@ -13,8 +13,21 @@ class BookDetail extends Component {
     error: false,
     junior: true
   };
+
   componentDidMount() {
+    document.title = `AFM - Lessons`;
     const lessonID = this.props.match.params.id;
+    this.queryDatabase(lessonID);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      const lessonID = this.props.match.params.id;
+      this.queryDatabase(lessonID);
+    }
+  }
+
+  queryDatabase = lessonID => {
     firebaseAdult
       .child(this.props.lang.lang)
       .orderByChild("book")
@@ -46,7 +59,7 @@ class BookDetail extends Component {
       .catch(e => {
         this.setState({ error: true, isLoading: false });
       });
-  }
+  };
 
   showLessons = (lessons, type = false) =>
     lessons

@@ -15,6 +15,7 @@ class Cgs extends Component {
   };
 
   componentDidMount() {
+    document.title="View Cgs"
     firebaseCgs
       .child(this.props.lang.lang)
       .orderByKey()
@@ -80,7 +81,11 @@ class Cgs extends Component {
           </table>
         </div>
         {this.state.isLoading ? <Spinner /> : ""}
-        <Modal display={this.state.isShowChorus} close={this.closeChorus}>
+        <Modal
+          display={this.state.isShowChorus}
+          close={this.closeChorus}
+          header="View Choruses"
+        >
           <Chorus />
         </Modal>
         {!this.state.isShowChorus ? (

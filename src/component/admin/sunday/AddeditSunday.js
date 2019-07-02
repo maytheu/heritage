@@ -162,7 +162,7 @@ class AddeditSunday extends Component {
       ...updatedOrderForm[element.id]
     };
     let formValid = true;
-    if (content === "") {
+    if (content === "") { 
       updatedFormElement.value = element.event.target.value;
     } else {
       updatedFormElement.value = content;
@@ -343,7 +343,7 @@ class AddeditSunday extends Component {
         </form>
         <div>
           {this.state.formSuccess === "Success" ? (
-            <Link to="/admin/lessons">Go to Home</Link>
+            <Link to="/admin/lessons">View update</Link>
           ) : null}
         </div>
       </div>

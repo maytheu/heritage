@@ -1,3 +1,4 @@
+import "materialize-css/dist/css/materialize.min.css";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -8,148 +9,57 @@ import { checkValidityInput } from "../../utils/checkValidity";
 import { firebaseAdult, firebaseJunior, firebaseElem } from "../../../firebase";
 
 class Sunday extends Component {
-  state = {
-    formData: {
-      search: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Search for Lessons"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
-      }
-    },
-    isValidForm: false,
-    isLoading: true,
-    adult: {
-      id: "",
-      title: "",
-      memoryVerse: "",
-      number: "",
-      reference: ""
-    },
-    junior: {
-      id: "",
-      title: "",
-      memoryVerse: "",
-      number: "",
-      reference: ""
-    },
-    elem: {
-      id: "",
-      title: "",
-      memoryVerse: "",
-      number: "",
-      reference: ""
-    },
-    adultLessons: [],
-    juniorLessons: [],
-    elemLessons: [],
-    isSearchAdult: false,
-    isSearchElem: false,
-    isSearchJunior: false,
-    searchElem: [],
-    searchJunior: [],
-    searchAdult: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      formData: {
+        search: {
+          elementType: "input",
+          elementConfig: {
+            type: "text",
+            placeholder: "Search for Lessons"
+          },
+          value: "",
+          validation: {
+            required: true
+          },
+          valid: false,
+          touch: false
+        }
+      },
+      isValidForm: false,
+      isLoading: true,
+      adultLessons: [],
+      juniorLessons: [],
+      elemLessons: [],
+      isSearchAdult: false,
+      isSearchElem: false,
+      isSearchJunior: false,
+      searchElem: [],
+      searchJunior: [],
+      searchAdult: [],
+      lessonID: "",
+      elemID: ""
+    };
+  }
 
   componentDidMount() {
+    this._isMounted = true;
+    document.title = `AFM - Lesson of the week`;
     let lessonID = thisWeek(9);
     let elemID = thisWeek(3);
-
+    this.setState({ lessonID, elemID });
     this.queryDatabase();
+  }
 
-    firebaseAdult
-      .child(this.props.lang.lang)
-      .orderByChild("number")
-      .equalTo(lessonID)
-      .once("value")
-      .then(snapshot => {
-        snapshot.forEach(userSnapshot => {
-          const title = userSnapshot.val().title;
-          const number = userSnapshot.val().number;
-          const reference = userSnapshot.val().reference;
-          const memoryVerse = userSnapshot.val().memoryVerse;
-          let id = userSnapshot.key;
-          this.setState({
-            adult: {
-              title,
-              memoryVerse,
-              number,
-              reference,
-              id
-            },
-            isLoading: false
-          });
-        });
-      })
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      this.queryDatabase();
+    }
+  }
 
-      .catch(e => {
-        this.setState({ error: true, isLoading: false });
-      });
-
-    firebaseJunior
-      .child(this.props.lang.lang)
-      .orderByChild("number")
-      .equalTo(lessonID)
-      .once("value")
-      .then(snapshot => {
-        snapshot.forEach(userSnapshot => {
-          const title = userSnapshot.val().title;
-          const number = userSnapshot.val().number;
-          const reference = userSnapshot.val().reference;
-          const memoryVerse = userSnapshot.val().memoryVerse;
-          let id = userSnapshot.key;
-          this.setState({
-            junior: {
-              title,
-              memoryVerse,
-              number,
-              reference,
-              id
-            },
-            isLoading: false
-          });
-        });
-      })
-
-      .catch(e => {
-        this.setState({ error: true, isLoading: false });
-      });
-
-    firebaseElem
-      .child(this.props.lang.lang)
-      .orderByChild("number")
-      .equalTo(elemID)
-      .once("value")
-      .then(snapshot => {
-        snapshot.forEach(userSnapshot => {
-          const title = userSnapshot.val().title;
-          const number = userSnapshot.val().number;
-          const reference = userSnapshot.val().reference;
-          const memoryVerse = userSnapshot.val().memoryVerse;
-          let id = userSnapshot.key;
-          this.setState({
-            elem: {
-              title,
-              memoryVerse,
-              number,
-              reference,
-              id
-            },
-            isLoading: false
-          });
-        });
-      })
-
-      .catch(e => {
-        this.setState({ error: true, isLoading: false });
-      });
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   valueChangedHandler = element => {
@@ -210,10 +120,7 @@ class Sunday extends Component {
 
   submitForm = event => {
     this.setState({
-      isLoading: true,
-      adult: "",
-      junior: "",
-      elem: ""
+      isLoading: true
     });
     event.preventDefault();
     const value = this.state.formData.search.value;
@@ -234,11 +141,7 @@ class Sunday extends Component {
       } else {
         this.setState({ searchAdult, isSearchAdult: true, isLoading: false });
       }
-    } else {
-      this.setState({ error: "Unable to connect", isLoading: false });
-    }
-
-    if (this.state.juniorLessons) {
+    } else if (this.state.juniorLessons) {
       let searchJunior = this.state.juniorLessons.filter(search => {
         return search.title.indexOf(value) !== -1;
       });
@@ -254,11 +157,7 @@ class Sunday extends Component {
       } else {
         this.setState({ searchJunior, isLoading: false, isSearchJunior: true });
       }
-    } else {
-      this.setState({ error: "Unable to connect", isLoading: false });
-    }
-
-    if (this.state.elemLessons) {
+    } else if (this.state.elemLessons) {
       let searchElem = this.state.elemLessons.filter(search => {
         return search.title.indexOf(value) !== -1;
       });
@@ -279,20 +178,31 @@ class Sunday extends Component {
     }
   };
 
-  showLessons = (lesson, type = "") => (
-    <div>
-      <Link
-        to={
-          type !== "" ? `/lesson_${type}/${lesson.id}` : `/lesson/${lesson.id}`
-        }
-      >
-        <div>{lesson.number}</div>
-        <div>{lesson.title}</div>
-      </Link>
-      <div>{lesson.reference}</div>
-      <div>{lesson.memoryVerse}</div>
-    </div>
-  );
+  weekLesson = (lesson, lessonNumber) => {
+    return lesson.filter(search => {
+      return search.number.indexOf(lessonNumber) !== -1;
+    });
+  };
+
+  showLessons = (lesson, lessonNumber, type = "") => {
+    let week = this.weekLesson(lesson, lessonNumber);
+    return (
+      <div>
+        <Link
+          to={
+            type !== ""
+              ? `/lesson_${type}/${week[0].id}`
+              : `/lesson/${week[0].id}`
+          }
+        >
+          <div>{week[0].number}</div>
+          <div>{week[0].title}</div>
+        </Link>
+        <div>{week[0].reference}</div>
+        <div>{week[0].memoryVerse}</div>
+      </div>
+    );
+  };
 
   showSearch = (lessons, type = "") =>
     lessons.map(lesson => (
@@ -313,9 +223,7 @@ class Sunday extends Component {
     ));
 
   render() {
-    console.log(this.state);
     const lessons = this.state.formData.search;
-
     return (
       <div className="container">
         <form className="form" onSubmit={event => this.submitForm(event)}>
@@ -328,26 +236,48 @@ class Sunday extends Component {
             touched={lessons.touch}
             changed={element => this.valueChangedHandler(element)}
           />
-          <button sty1le={{ flexGrow: "1" }} disabled={!this.state.isValidForm}>
+          <button style={{ flexGrow: "1" }} disabled={!this.state.isValidForm}>
             Search
           </button>
         </form>
         {this.state.isLoading ? <Spinner /> : ""}
-        <div>Senior Lesson</div>
-        {this.state.isSearchAdult
-          ? this.showSearch(this.state.searchAdult)
-          : this.showLessons(this.state.adult)}
-        <div>Junior Lesson</div>
-        {this.state.isSearchJunior
-          ? this.showSearch(this.state.searchJunior, "junior")
-          : this.showLessons(this.state.junior, "junior")}
-        <div>Elementary Lesson</div>
-        {this.state.isSearchElem
-          ? this.showSearch(this.state.searchElem, "elem")
-          : this.showLessons(this.state.elem, "elem")}
-        <Link to="/books" className="btn-floating btn-large red">
-          <i className="material-icons">add</i>
-        </Link>
+        {this.state.adultLessons.length !== 0 &&
+        this.state.elemLessons.length !== 0 &&
+        this.state.juniorLessons.length !== 0 ? (
+          <div>
+            <div>Senior Lesson</div>
+            {this.state.isSearchAdult
+              ? this.showSearch(this.state.searchAdult)
+              : this.showLessons(this.state.adultLessons, this.state.lessonID)}
+            <div>Junior Lesson</div>
+            {this.state.isSearchJunior
+              ? this.showSearch(this.state.searchJunior, "junior")
+              : this.showLessons(
+                  this.state.juniorLessons,
+                  this.state.lessonID,
+                  "junior"
+                )}
+            <div>Elementary Lesson</div>
+            {this.state.isSearchElem
+              ? this.showSearch(this.state.searchElem, "elem")
+              : this.showLessons(
+                  this.state.elemLessons,
+                  this.state.elemID,
+                  "elem"
+                )}
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="fixed-action-btn" style={{ bottom: "116px" }}>
+          <Link
+            to="/books"
+            className="btn-floating btn-large "
+            style={{ backgroundColor: "rgba(32, 87, 187, 0.59)" }}
+          >
+            <i className="material-icons">add</i>
+          </Link>
+        </div>
       </div>
     );
   }

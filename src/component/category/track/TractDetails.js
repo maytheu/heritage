@@ -15,6 +15,7 @@ class TractDetails extends Component {
   };
 
   componentDidMount() {
+    document.title = `AFM - Tract ${this.state.number}`;
     const tractID = this.props.match.params.id;
     if (tractID) {
       firebaseTract
@@ -38,6 +39,31 @@ class TractDetails extends Component {
         });
     } else {
       this.setState({ error: true });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      firebaseTract
+        .child(this.props.lang.lang)
+        .orderByChild("number")
+        .equalTo(this.state.number)
+        .once("value", snapshot => {
+          snapshot.forEach(childSnapshot => {
+            const tract = childSnapshot.val().notes;
+            const title = childSnapshot.val().title;
+            const number = childSnapshot.val().number;
+            this.setState({
+              tract,
+              number,
+              title,
+              isLoading: false,
+            });
+          });
+        })
+        .catch(e => {
+          this.setState({ isLoading: false, error: e });
+        });
     }
   }
 

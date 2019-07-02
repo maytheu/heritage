@@ -1,20 +1,11 @@
 .headerHome {
-  height: 10%;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #2057bb96;
-  display: flex;
-  justify-content: space-between;
-  z-index: 90;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
+  background-color: rgba(32, 87, 187, 0.59);
+  padding: 20px 10px;
+  height: 100px;
 }
 .drawerToggle {
+  float: left;
   width: 40px;
-  height: 100%;
   display: flex;
   flex-flow: column;
   justify-content: space-around;
@@ -25,11 +16,12 @@
 }
 
 .drawerToggle div {
-  width: 90%;
-  height: 3px;
+  width: 35px;
+  height: 5px;
   background-color: white;
+  margin: 4px 0;
 }
-.sideDrawer{
+.sideDrawer {
   position: fixed;
   width: 280px;
   max-width: 70%;
@@ -40,32 +32,34 @@
   background-color: white;
   padding: 32px 16px;
   box-sizing: border-box;
-  transition: transform 0.3s ease-out
+  transition: transform 0.3s ease-out;
 }
-.open{
-  transform: translateX(0) 
-}
-
-.close{
-  transform: translateX(-100%)
+.open {
+  transform: translateX(0);
 }
 
-.closeToggle{
+.close {
+  transform: translateX(-100%);
+}
+
+.closeToggle {
   right: 0;
   position: absolute;
   margin-right: 16px;
   cursor: pointer;
 }
-.navigationItems{
+.navigationItems {
   margin: 0;
-  padding: 0;
+  padding: 0 15px;
   list-style: none;
   display: flex;
   flex-flow: column;
   align-items: center;
   height: 100%;
+  cursor: pointer;
+
 }
-.link{
+.link {
   margin: 10px 0;
   width: 100%;
   box-sizing: border-box;
@@ -76,10 +70,13 @@
   width: 100%;
   text-decoration: none;
   display: block;
-  box-sizing: border-box; 
+  box-sizing: border-box;
+  transition: background-color .3s;
+  font-size: 1rem;
+  padding: 0 15px
 }
 .link a:hover,
 .link a:active,
-.link a.active{
-    color: #40a4c8
+.link a.active {
+  color: rgba(32, 87, 187, 0.59);
 }

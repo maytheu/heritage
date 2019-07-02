@@ -2,7 +2,7 @@ import React from "react";
 
 const About = () => {
   return (
-    <div class="container">
+    <div className="container">
       <div>
         The Apostolic Faith Church is a worldwide Christian organization, with
         headquarter in Portland Oregon, USA

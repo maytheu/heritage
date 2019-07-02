@@ -27,6 +27,10 @@ class Location extends Component {
     isLoading: false
   };
 
+  componentDidMount() {
+    document.title = "AFM - Address";
+  }
+
   valueChangedHandler = element => {
     const updatedOrderForm = {
       ...this.state.formData
@@ -50,7 +54,7 @@ class Location extends Component {
 
   submitForm = (event, type) => {
     event.preventDefault();
-this.setState({isLoading: true})
+    this.setState({ isLoading: true });
     const value = this.state.formData.search.value;
     if (this.state.isValidForm) {
       firebaselocation
@@ -85,21 +89,18 @@ this.setState({isLoading: true})
             Search
           </button>
         </form>
-        {
-          this.state.isLoading ? 
+        {this.state.isLoading ? (
           <Spinner />
-          :
-          (this.state.location && this.state.location.length > 0) ? 
+        ) : this.state.location && this.state.location.length > 0 ? (
           this.state.location.map(locate => (
             <div key={locate.id}>
-            <div>{locate.region}</div>
-            {locate.address}
+              <div>{locate.region}</div>
+              {locate.address}
             </div>
           ))
-          : <div>Try other keyword and uppercase</div>
-        }
-        
-        
+        ) : (
+          <div>Try other keyword and uppercase</div>
+        )}
       </div>
     );
   }

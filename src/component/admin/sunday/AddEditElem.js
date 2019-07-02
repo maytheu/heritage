@@ -346,7 +346,7 @@ class AddEditElem extends Component {
         </form>
         <div>
           {this.state.formSuccess === "Success" ? (
-            <Link to="/admin/lessons">Go to Home</Link>
+            <Link to="/admin/lessons">View update</Link>
           ) : null}
         </div>
       </div>

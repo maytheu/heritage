@@ -30,7 +30,7 @@ class Junior extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="container" style={{ minHeight: "33vh" }}>
         <div>
           <table>
             <thead>
@@ -58,7 +58,6 @@ class Junior extends Component {
           </table>
         </div>
         {this.state.isLoading ? <Spinner /> : ""}
-        <Link to="/admin/lessons/edit_junior">Add New Lessons</Link>
       </div>
     );
   }

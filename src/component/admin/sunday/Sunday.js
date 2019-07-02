@@ -18,6 +18,17 @@ class Sunday extends Component {
   };
 
   componentDidMount() {
+    document.title = "Sunday School Lessons";
+    this.queryDatabase();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      this.queryDatabase();
+    }
+  }
+
+  queryDatabase = () => {
     firebaseAdult
       .child(this.props.lang.lang)
       .once("value")
@@ -31,8 +42,7 @@ class Sunday extends Component {
       .catch(e => {
         this.setState({ error: true, isLoading: false });
       });
-  }
-
+  };
   showJunior = () => {
     this.setState({ isShowJunior: true });
   };
@@ -78,14 +88,28 @@ class Sunday extends Component {
         <Modal
           display={this.state.isShowJunior || this.state.isShowElem}
           close={this.closeModal}
+          header={
+            this.state.isShowJunior ? "Junior Lessons" : "Elementary Lessons"
+          }
+          link={
+            this.state.isShowJunior
+              ? "/admin/lessons/edit_junior"
+              : "/admin/lessons/edit_elem"
+          }
+          footer={"Add New Lessons"}
         >
           {this.state.isShowJunior ? <Junior /> : <Elem />}
         </Modal>
         <div>
           {!this.state.isShowJunior && !this.state.isShowElem ? (
-            <div>
-              <button onClick={this.showJunior}>View Junior Lesson</button>
-              <button onClick={this.showElem}>View Elementary Lesson</button>
+            <div className="row">
+              <button onClick={this.showJunior} className="col-sm-5">
+                View Junior Lesson
+              </button>
+              <div className="col-sm-2" />
+              <button onClick={this.showElem} className="col-sm-5">
+                View Elementary Lesson
+              </button>
             </div>
           ) : null}
         </div>

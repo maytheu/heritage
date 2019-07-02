@@ -33,36 +33,33 @@ const SideDrawer = props => {
     attachedCSS = ["sideDrawer", "open"];
   }
   return (
-    <div className={attachedCSS.join(" ")}>
-      <div onClick={props.closed}>
-        <ul className="navigationItems">
-          {!props.user ? (
-            <nav>
-              {lists.map(list => (
-                <ul className="navigationItems" key={list.name}>
-                  <li className="link">
-                    <NavLink to={list.linkTo} exact activeClassName="active">
-                      {list.name}
-                    </NavLink>
-                  </li>
-                </ul>
-              ))}
-            </nav>
-          ) : (
-            <nav>
+    <div className={attachedCSS.join(" ")} onClick={props.closed}>
+      <div>
+        {!props.user ? (
+          <ul className="navigationItems">
+            {lists.map(list => (
+              <li className="link" key={list.name}>
+                <NavLink to={list.linkTo} exact activeClassName="active">
+                  {list.name}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div>
+            <ul className="navigationItems">
               {adminLists.map(list => (
-                <ul className="navigationItems" key={list.name}>
-                  <li className="link">
-                    <NavLink to={list.linkTo} exact activeClassName="active">
-                      {list.name}
-                    </NavLink>
-                  </li>
-                </ul>
+                <li className="link" key={list.name}>
+                  <NavLink to={list.linkTo} exact activeClassName="active">
+                    {list.name}
+                  </NavLink>
+                </li>
               ))}
-              <button onClick={() => logoutHandler()}>Logout</button>
-            </nav>
-          )}
-        </ul>
+            </ul>
+
+            <button onClick={() => logoutHandler()}>Logout</button>
+          </div>
+        )}
       </div>
     </div>
   );

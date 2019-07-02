@@ -29,6 +29,17 @@ class Tracks extends Component {
   };
 
   componentDidMount() {
+    document.title = `AFM - Tract`;
+    this.queryDatabase();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      this.queryDatabase();
+    }
+  }
+  
+  queryDatabase = () => {
     firebaseTract
       .child(this.props.lang.lang)
       .orderByKey()
@@ -41,8 +52,7 @@ class Tracks extends Component {
           isLoading: false
         });
       });
-  }
-
+  };
   showTract = tract =>
     tract ? (
       tract.map(outline => (

@@ -9,64 +9,73 @@ import { firebaseChorus, firebaseCgs } from "../../../firebase";
 import { firebaseLooper, Spinner } from "../../utils/misc";
 
 class Cgs extends Component {
-  state = {
-    formData: {
-      cgs: {
-        elementType: "input",
-        elementConfig: {
-          type: "number",
-          placeholder: "Song Number"
+  constructor(props) {
+    super(props);
+    this._isMounted = false;
+
+    this.state = {
+      formData: {
+        cgs: {
+          elementType: "input",
+          elementConfig: {
+            type: "number",
+            placeholder: "Song Number"
+          },
+          value: "",
+          validation: {
+            required: true,
+            minLength: 1,
+            maxLength: 3,
+            minRange: 1,
+            MaxRange: 700
+          },
+          valid: false,
+          touch: false
         },
-        value: "",
-        validation: {
-          required: true,
-          minLength: 1,
-          maxLength: 3,
-          minRange: 1,
-          MaxRange: 700
+        chorus: {
+          elementType: "input",
+          elementConfig: {
+            type: "text",
+            placeholder: "Search Chorus"
+          },
+          value: "",
+          validation: {
+            required: true
+          },
+          valid: false,
+          touch: false
         },
-        valid: false,
-        touch: false
+        search: {
+          elementType: "input",
+          elementConfig: {
+            type: "text",
+            placeholder: "Search song"
+          },
+          value: "",
+          validation: {
+            required: true
+          },
+          valid: false,
+          touch: false
+        }
       },
-      chorus: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Searchh Chorus"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
-      },
-      search: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Search song"
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
-      }
-    },
-    chorusSong: [],
-    cgsSong: [],
-    error: "",
-    isValidForm: false,
-    isLoading: true,
-    searchFilter: [],
-    isCgs: false,
-    result: ""
-  };
+      chorusSong: [],
+      cgsSong: [],
+      error: "",
+      isValidForm: false,
+      isLoading: true,
+      searchFilter: [],
+      isCgs: false,
+      result: ""
+    };
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   componentDidMount() {
-    document.title = "Cgs";
+    this._isMounted = true;
+    document.title = "AFM - CGS";
     firebaseChorus
       .child(this.props.lang.lang)
       .once("value")
@@ -88,6 +97,32 @@ class Cgs extends Component {
           isLoading: false
         });
       });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      firebaseChorus
+        .child(this.props.lang.lang)
+        .once("value")
+        .then(snapshot => {
+          const chorusSong = firebaseLooper(snapshot);
+          this.setState({
+            chorusSong,
+            isLoading: false
+          });
+        });
+
+      firebaseCgs
+        .child(this.props.lang.lang)
+        .once("value")
+        .then(snapshot => {
+          const cgsSong = firebaseLooper(snapshot);
+          this.setState({
+            cgsSong,
+            isLoading: false
+          });
+        });
+    }
   }
 
   valueChangedHandler = element => {
@@ -264,7 +299,7 @@ class Cgs extends Component {
         </form>
         <div>{this.state.result !== "" ? this.state.result : null}</div>
         {this.showChorus(
-          this.state.searchFilter
+          this.state.searchFilter.length !== 0
             ? this.state.searchFilter
             : this.state.chorusSong
         )}

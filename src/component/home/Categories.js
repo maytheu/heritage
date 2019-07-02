@@ -12,7 +12,8 @@ const Categories = () => {
             <div>
               <i className="material-icons large">import_contacts</i>
             </div>
-            <div>Sunday School </div><div>Lessons</div>
+            <div>Sunday School </div>
+            <div>Lessons</div>
           </Link>
         </div>
         <div className="item">

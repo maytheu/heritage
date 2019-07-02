@@ -298,7 +298,7 @@ class AddEditCgs extends Component {
 
         <div>
           {this.state.formSuccess === "Success" ? (
-            <Link to="/">Go to Home</Link>
+            <Link to="/admin/cgs">View Update</Link>
           ) : null}
         </div>
         {this.state.cgsId === "" ? (

@@ -12,6 +12,7 @@ class Chorus extends Component {
     }
 
     componentDidMount() {
+      document.title="View Choruses"
         firebaseChorus
           .child(this.props.lang.lang)
           .orderByKey()

@@ -8,28 +8,48 @@ import { firebaseLooper, Spinner } from "../../utils/misc";
 import { firebaseStudy } from "../../../firebase";
 
 class Study extends Component {
-  state = {
-    formData: {
-      search: {
-        elementType: "input",
-        elementConfig: {
-          type: "text",
-          placeholder: "Search for Bible Study Outline "
-        },
-        value: "",
-        validation: {
-          required: true
-        },
-        valid: false,
-        touch: false
-      }
-    },
-    study: [],
-    isValidForm: false,
-    isLoading: true
-  };
+  constructor(props) {
+    super(props);
+    this._isMounted = false;
+    this.state = {
+      formData: {
+        search: {
+          elementType: "input",
+          elementConfig: {
+            type: "text",
+            placeholder: "Search for Bible Study Outline "
+          },
+          value: "",
+          validation: {
+            required: true
+          },
+          valid: false,
+          touch: false
+        }
+      },
+      study: [],
+      isValidForm: false,
+      isLoading: true
+    };
+  }
 
   componentDidMount() {
+    this._isMounted = true;
+    document.title = "AFM - Study Outline";
+    this.queryDatabase();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.lang.lang !== prevProps.lang.lang) {
+      this.queryDatabase();
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  queryDatabase = () => {
     firebaseStudy
       .child(this.props.lang.lang)
       .orderByKey()
@@ -42,8 +62,7 @@ class Study extends Component {
           isLoading: false
         });
       });
-  }
-
+  };
   valueChangedHandler = element => {
     const updatedOrderForm = {
       ...this.state.formData

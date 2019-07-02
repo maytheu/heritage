@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Row } from "reactstrap";
 
 import { language } from "../../actions/settings";
 
@@ -13,13 +14,13 @@ class Settings extends Component {
   };
 
   render() {
-    console.log(this.props.lang);
     let languageObject = Object.keys(this.state.langs).map(langKey => {
       return [...Array(this.state.langs[langKey])].map((_, index) => {
         return (
-          <label key={langKey}>
+          <label key={langKey} className="col-sm-3">
             <input
               type="radio"
+              style={{ opacity: "1", position: "inherit" }}
               checked={langKey === this.props.lang.lang}
               onChange={this.isChecked.bind(this, langKey)}
             />
@@ -29,7 +30,11 @@ class Settings extends Component {
       });
     });
 
-    return <div>{languageObject}</div>;
+    return (
+      <div>
+        <Row>{languageObject}</Row>
+      </div>
+    );
   }
 }
 
