@@ -6,7 +6,11 @@ import { language } from "../../actions/settings";
 
 class Pages extends Component {
   componentDidMount() {
-    this.props.dispatch(language("en"));
+    if (this.props.lang.lang) {
+      this.props.dispatch(language(this.props.lang.lang));
+    } else {
+      this.props.dispatch(language("en"));
+    }
   }
 
   render() {

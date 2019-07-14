@@ -8,7 +8,6 @@ import Footer from "./component/header_footer/Footer";
 import Pages from "./component/hoc/Pages";
 import Cgs from "./component/category/cgs/Cgs";
 import Sunday from "./component/category/sunday/Sunday";
-import Info from "./component/category/info/Info";
 import Location from "./component/category/location/Location";
 import Tracks from "./component/category/track/Tracks";
 import Study from "./component/category/study/Study";
@@ -42,7 +41,13 @@ import PublicRoute from "./component/utils/authRoute/publicRoute";
 import NotFound from "./component/utils/NotFound";
 import About from "./component/category/About";
 import Steps from "./component/category/Steps";
-
+import AdminChoirHymn from "./component/admin/choir/ChoirHymn";
+import AdminChoir from "./component/admin/choir/Choir";
+import AdminAddEditChoir from "./component/admin/choir/AddEditChoir";
+import AdminAddHymnal from "./component/admin/choir/AddHymnal";
+import Hymnal from "./component/category/choir/Hymnal";
+import DetailHymn from "./component/category/choir/DetailHymn";
+import ViewPiece from "./component/category/choir/ViewPiece";
 
 class App extends Component {
   render() {
@@ -178,6 +183,36 @@ class App extends Component {
               {...this.props}
               component={AdminAddEditTrack}
             />
+            <PrivateRoute
+              path="/admin/hymn/hymn/:hymn"
+              exact
+              {...this.props}
+              component={AdminChoirHymn}
+            />
+            <PrivateRoute
+              path="/admin/hymn"
+              exact
+              {...this.props}
+              component={AdminChoir}
+            />
+            <PrivateRoute
+              path="/admin/hymn/add"
+              exact
+              {...this.props}
+              component={AdminAddEditChoir}
+            />
+            <PrivateRoute
+              path="/admin/hymn/edit/:id"
+              exact
+              {...this.props}
+              component={AdminAddEditChoir}
+            />
+            <PrivateRoute
+              path="/admin/hymn/add_hymn"
+              exact
+              {...this.props}
+              component={AdminAddHymnal}
+            />
 
             <PublicRoute
               path="/books"
@@ -245,9 +280,23 @@ class App extends Component {
             />
             <PublicRoute
               restricted={false}
-              path="/info"
+              path="/hymn"
               exact
-              component={Info}
+              component={Hymnal}
+              {...this.props}
+            />
+            <PublicRoute
+              restricted={false}
+              path="/hymn/:hymn"
+              exact
+              component={DetailHymn}
+              {...this.props}
+            />
+            <PublicRoute
+              restricted={false}
+              path="/hymn_details/:id"
+              exact
+              component={ViewPiece}
               {...this.props}
             />
             <PublicRoute

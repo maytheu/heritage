@@ -52,7 +52,6 @@ class AddEditTrack extends Component {
           minLength: 1,
           maxLength: 3,
           minRange: 1,
-          MaxRange: 100
         },
         valid: false,
         touch: false

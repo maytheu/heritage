@@ -54,6 +54,23 @@ class AddEditStudy extends Component {
         },
         valid: false
       },
+      number: {
+        elementType: "input",
+        elementConfig: {
+          type: "number",
+          placeholder: "Study Number"
+        },
+        value: "",
+        validation: {
+          required: true,
+          minLength: 1,
+          maxLength: 3,
+          minRange: 1
+        },
+        valid: false,
+        touch: false
+      },
+
       title: {
         elementType: "input",
         elementConfig: {
@@ -92,7 +109,8 @@ class AddEditStudy extends Component {
         },
         valid: false,
         touch: false
-      }    }
+      }
+    }
   };
 
   updateField = (data, editorState, id, type) => {
@@ -115,11 +133,11 @@ class AddEditStudy extends Component {
     const studyID = this.props.match.params.id;
 
     if (!studyID) {
-      document.title = "Edit Study Outline ";
       this.setState({
         isPage: "Add Outline"
       });
     } else {
+      document.title='Ediit Study Outliine'
       firebaseDB
         .ref(`study/${this.props.lang.lang}/${studyID}`)
         .once("value")
@@ -161,13 +179,12 @@ class AddEditStudy extends Component {
     }
     this.setState({ formData: updatedOrderForm, isValidForm: formValid });
   };
-  
+
   onEditorStateChange = editorState => {
     this.setState({
       editorState
     });
   };
-
 
   submitForm = event => {
     event.preventDefault();
@@ -186,6 +203,7 @@ class AddEditStudy extends Component {
       const studyDetails = {
         title: submitData.title,
         classType: submitData.classType,
+        number: submitData.number,
         memoryVerse: submitData.memoryVerse,
         verse: submitData.verse,
         lesson: convertedData
@@ -220,24 +238,36 @@ class AddEditStudy extends Component {
     const lang = this.state.formData.language;
     const classType = this.state.formData.classType;
     const title = this.state.formData.title;
-    const {editorState } = this.state
+    const { editorState } = this.state;
     const verse = this.state.formData.verse;
     const memoryVerse = this.state.formData.memoryVerse;
+    const number = this.state.formData.number;
 
     return (
       <div className="container">
         <h3>{this.state.isPage}</h3>
         <form onSubmit={event => this.submitForm(event)}>
           {this.state.isPage === "Add Outline" ? (
-            <InputField
-              id={"language"}
-              elementType={lang.elementType}
-              elementConfig={lang.elementConfig}
-              value={lang.value}
-              invalid={!lang.valid}
-              touched={lang.touch}
-              changed={element => this.valueChangedHandler(element)}
-            />
+            <div>
+              <InputField
+                id={"language"}
+                elementType={lang.elementType}
+                elementConfig={lang.elementConfig}
+                value={lang.value}
+                invalid={!lang.valid}
+                touched={lang.touch}
+                changed={element => this.valueChangedHandler(element)}
+              />
+              <InputField
+                id={"number"}
+                elementType={number.elementType}
+                elementConfig={number.elementConfig}
+                value={number.value}
+                invalid={!number.valid}
+                touched={number.touch}
+                changed={element => this.valueChangedHandler(element)}
+              />
+            </div>
           ) : null}
           <InputField
             id={"classType"}

@@ -10,6 +10,7 @@ import { firebase } from "./firebase";
 import "./index.css";
 import App from "./App";
 import rootReducer from "./reducer/rootReducer";
+import * as serviceWorker from './serviceWorker'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
@@ -28,3 +29,5 @@ const Apps = props => (
 firebase.auth().onAuthStateChanged(user => {
   ReactDOM.render(<Apps user={user} />, document.getElementById("root"));
 });
+
+serviceWorker.unregister()

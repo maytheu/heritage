@@ -15,7 +15,9 @@ const SideDrawer = props => {
     { name: "Bible Study", linkTo: "/admin/study" },
     { name: "Add Bile Study", linkTo: "/admin/study_edit" },
     { name: "Tracts", linkTo: "/admin/track" },
-    { name: "Add Tracts", linkTo: "/admin/track_edit" }
+    { name: "Add Tracts", linkTo: "/admin/track_edit" },
+    { name: "Hymn", linkTo: "/admin/hymn" },
+    { name: "Add Hymn", linkTo: "/admin/hymn/add" }
   ];
   const lists = [
     { name: "About Us", linkTo: "/about" },
@@ -24,7 +26,8 @@ const SideDrawer = props => {
     { name: "Sunday School", linkTo: "/lessons" },
     { name: "Bible Study", linkTo: "/study" },
     { name: "Cgs", linkTo: "/cgs" },
-    { name: "Tracts", linkTo: "/tracts" }
+    { name: "Tracts", linkTo: "/tracts" },
+    { name: "Hymn", linkTo: "/hymn" }
   ];
   const logoutHandler = () => {
     firebase.auth().signOut();

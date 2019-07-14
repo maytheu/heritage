@@ -1,5 +1,5 @@
 import React from "react";
- 
+
 import "./InputField.css";
 
 const InputField = props => {
@@ -35,13 +35,23 @@ const InputField = props => {
         </select>
       );
       break;
-      case 'textarea':
+    case "textarea":
       inputElement = (
         <textarea
           className={validateInputClass.join(" ")}
           {...props.elementConfig}
           value={props.value}
           onChange={event => props.changed({ event, id: props.id })}
+        />
+      );
+      break;
+    case "image":
+      inputElement = (
+        <input
+          className={validateInputClass.join(" ")}
+          type={props.type}
+          multiple
+          onChange={props.changed }
         />
       );
       break;

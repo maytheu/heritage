@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { Row, Col } from "reactstrap";
 
 import { firebaseAdult } from "../../../firebase";
 import { firebaseLooper, Spinner } from "../../utils/misc";
@@ -102,15 +103,15 @@ class Sunday extends Component {
         </Modal>
         <div>
           {!this.state.isShowJunior && !this.state.isShowElem ? (
-            <div className="row">
-              <button onClick={this.showJunior} className="col-sm-5">
-                View Junior Lesson
-              </button>
-              <div className="col-sm-2" />
-              <button onClick={this.showElem} className="col-sm-5">
-                View Elementary Lesson
-              </button>
-            </div>
+            <Row>
+              <Col sm="5">
+                <button onClick={this.showJunior}>View Junior Lesson</button>
+              </Col>
+              <Col sm="2" />
+              <Col sm="5">
+                <button onClick={this.showElem}>View Elementary Lesson</button>
+              </Col>
+            </Row>
           ) : null}
         </div>
       </div>

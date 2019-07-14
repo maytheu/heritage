@@ -35,11 +35,11 @@ const Categories = () => {
       </div>
       <div className="category">
         <div className="item">
-          <Link to="/info">
+          <Link to="/hymn">
             <div>
-              <i className="material-icons large">info</i>
+              <i className="material-icons large">book</i>
             </div>
-            <div>Info</div>
+            <div>Hymn</div>
           </Link>
         </div>
         <div className="item">
