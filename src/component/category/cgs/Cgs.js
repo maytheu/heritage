@@ -9,8 +9,8 @@ import { firebaseChorus, firebaseCgs } from "../../../firebase";
 import { firebaseLooper, Spinner } from "../../utils/misc";
 
 class Cgs extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this._isMounted = false;
 
     this.state = {

@@ -8,8 +8,8 @@ import { firebaseLooper, Spinner } from "../../utils/misc";
 import { firebaseStudy } from "../../../firebase";
 
 class Study extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this._isMounted = false;
     this.state = {
       formData: {

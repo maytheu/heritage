@@ -3,13 +3,39 @@
   "name": "Afm Heritage",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": "/afm_heritage",
+      "src": "/logo128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "/logo144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "/logo152.png",
+      "type": "image/png",
+      "sizes": "152x152"
+    },
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/logo256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }  ],
+  "start_url": "/?utm_source=pwa_homescreen",
   "display": "standalone",
-  "theme_color": "#000000",
+  "description": "Afm Herirage provide the fundamental teaching of the Apostolic Faith Church",
+  "scope": "/",
+  "theme_color": "#ffffff",
   "background_color": "#ffffff"
 }

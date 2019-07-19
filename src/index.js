@@ -30,4 +30,4 @@ firebase.auth().onAuthStateChanged(user => {
   ReactDOM.render(<Apps user={user} />, document.getElementById("root"));
 });
 
-serviceWorker.unregister()
+serviceWorker.register()

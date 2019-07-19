@@ -9,8 +9,8 @@ import { checkValidityInput } from "../../utils/checkValidity";
 import { firebaseAdult, firebaseJunior, firebaseElem } from "../../../firebase";
 
 class Sunday extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       formData: {
         search: {
